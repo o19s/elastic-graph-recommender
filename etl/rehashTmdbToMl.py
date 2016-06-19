@@ -9,6 +9,9 @@ def rehashToMovielens(tmdbFile='tmdb.json', outFile='ml_tmdb.json'):
             tmdbId = tmdbMovie['id']
             tmdbMovie['tmdb_id'] = tmdbId;
             del tmdbMovie['id']
+            origPath = tmdbMovie['poster_path']
+            if origPath:
+                tmdbMovie['poster_path'] = 'https://image.tmdb.org/t/p/w130' + tmdbMovie['poster_path']
         except KeyError:
             pass
         mlDict[tmdbMovie['mlensId']] = tmdbMovie
@@ -17,8 +20,4 @@ def rehashToMovielens(tmdbFile='tmdb.json', outFile='ml_tmdb.json'):
 
 
 if __name__ == "__main__":
-    #movieIds = movieList()
-    #movieDict = extract(movieIds)
-    #f = open('tmdb.json', 'w')
-    #f.write(json.dumps(movieDict))
     rehashToMovielens()
