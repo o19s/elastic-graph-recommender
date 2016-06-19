@@ -2,11 +2,14 @@ i<!doctype html>
 <html ng-app='recsApp'>
   <head>
     <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/elasticsearch/elasticsearch.angular.js"></script>
     <script src="scripts/app.js"></script>  
   </head>
     <body>
       <div ng-controller="LikedMoviesCtrl as lm">
-        <div ng-repeat="movie in lm.movies">{{movie.title}}</div>
+        <div ng-repeat="movie in lm.movies">{{movie.title}}
+          <img src="{{movie.poster_path}}"></img>
+        </div>
       </div>
     </body>
 </html>
