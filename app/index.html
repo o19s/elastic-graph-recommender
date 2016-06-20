@@ -1,15 +1,31 @@
 i<!doctype html>
 <html ng-app='recsApp'>
   <head>
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" ></link>
     <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
     <script src="bower_components/elasticsearch/elasticsearch.angular.js"></script>
     <script src="scripts/app.js"></script>  
   </head>
     <body>
-      <div ng-controller="LikedMoviesCtrl as lm">
-        <div ng-repeat="movie in lm.movies">{{movie.title}}
-          <img src="{{movie.poster_path}}"></img>
+      <div class="container">
+        <div class="jumbotron">
+          <h1>Elastic Graph Recommends...</h1>
+          <p>Demos of Graph-drive recommendations</p>
         </div>
+        <div class="container" ng-controller="RecsUserCtrl as recUsers">
+          <div class="row">
+            <select ng-change="recUsers.refetchProfile()" ng-model="recUsers.selected">
+              <option ng-repeat="(id, user) in recUsers.users" value="{{id}}">{{user.name}}</option>
+            </select>
+          </div>
+          <div class="row" ng-if="recUsers.currUser">
+            <div ng-repeat="movie in recUsers.currUser.likedMovies">
+              <img src="{{movie.poster_path}}"></img>
+            </div>
+          </div>
+        </div>
+
       </div>
     </body>
 </html>
