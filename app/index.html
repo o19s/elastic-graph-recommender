@@ -6,6 +6,7 @@ i<!doctype html>
     <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
     <script src="bower_components/elasticsearch/elasticsearch.angular.js"></script>
     <script src="scripts/app.js"></script>  
+    <script src="scripts/recsSvc.js"></script>  
   </head>
     <body>
       <div class="container">
@@ -20,7 +21,7 @@ i<!doctype html>
             </select>
           </div>
           <div class="row" ng-if="recUsers.currUser">
-            <div ng-repeat="movie in recUsers.currUser.likedMovies">
+            <div ng-repeat="movie in recUsers.currUser.likedMovies" class="pull-right">
               <img src="{{movie.poster_path}}"></img>
             </div>
           </div>

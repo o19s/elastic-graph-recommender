@@ -9,7 +9,7 @@ angular.module('recsApp')
 });
 
 angular.module('recsApp')
-  .controller('RecsUserCtrl', function(esClient) {
+  .controller('RecsUserCtrl', function(esClient, recsSvc) {
     var recUsers = this;
     recUsers.users = {
       '123': {name: 'Tom',  id: '123',  likedMovies: null},
@@ -20,27 +20,8 @@ angular.module('recsApp')
 
     recUsers.refetchProfile = function() {
       // fetch this users baskets
-      esClient.get({
-        index: 'movielens',
-        type: 'user',
-        id: recUsers.selected}).then(function(resp) {
-          var likedMovies = resp._source.liked_movies;
-          recUsers.currUser = recUsers.users[recUsers.selected];
-
-          esClient.mget({
-            index: 'ml_tmdb',
-            type: 'movie',
-            body: {ids: likedMovies}}).then(function(resp) {
-              var movies = [];
-              angular.forEach(resp.docs, function(doc) {
-                var movie = doc._source;
-                movies.push(movie);
-              });
-              recUsers.currUser.likedMovies = movies;
-              console.log(resp);
-            });
-
-        });
+      recUsers.currUser = recUsers.users[recUsers.selected];
+      recsSvc.fetchProfile(recUsers.currUser);
     };
     recUsers.currUser = null;
     recUsers.selected = null;
