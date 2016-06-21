@@ -28,13 +28,32 @@ def userBaskets(minRating=4):
                         "_id": lastUserId, "_source": {"liked_movies": basket}}
             basket = []
         if rating >= minRating:
-            basket.append(itemId)
+            basket.append(str(itemId))
+
+
+def createMovielens(es):
+    es.indices.delete('movielens', ignore=['400', '404'])
+    settings = { #A
+        "settings": {
+            "number_of_shards": 1, #B
+        },
+        "mappings": {
+            "user": {
+                "properties": {
+                    "liked_movies": {
+                        "type": "string"
+                    }
+                }
+            }
+        }}
+    es.indices.create('movielens', body=settings)
 
 
 def indexToEs():
     from elasticsearch import Elasticsearch
     import elasticsearch.helpers
     es = Elasticsearch()
+    createMovielens(es)
     elasticsearch.helpers.bulk(es, userBaskets())
 
 if __name__ == "__main__":
