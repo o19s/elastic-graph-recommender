@@ -21,7 +21,13 @@ i<!doctype html>
             </select>
           </div>
           <div class="row" ng-if="recUsers.currUser">
-            <div ng-repeat="movie in recUsers.currUser.likedMovies" class="pull-right">
+            <div ng-repeat="movie in recUsers.currUser.likedMovies" style="display: inline-block">
+              <img src="{{movie.poster_path}}"></img>
+            </div>
+          </div>
+          <h1>Elasticsearch recommendns...</h1>
+          <div class="row" ng-if="recUsers.currUser">
+            <div ng-repeat="movie in recUsers.currUser.relatedMovies" style="display: inline-block">
               <img src="{{movie.poster_path}}"></img>
             </div>
           </div>
