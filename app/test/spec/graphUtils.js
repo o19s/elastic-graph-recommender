@@ -8,6 +8,7 @@ describe('Graph Utilities', function() {
   }));
 
   it('has a property', function() {
+    console.log('Running test ');
     expect(graphUtils.hasOwnProperty('parse')).toBeTruthy();
   });
 
