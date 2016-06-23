@@ -1,15 +1,15 @@
 angular.module('recsApp')
   .factory('recsSvc', recsSvc);
 
-recsSvc.$inject = ['esClient', '$q', '$http'];
+recsSvc.$inject = ['esClient', '$q', '$http', 'graphUtils'];
 
 
-function recsSvc(esClient, $q, $http) {
+function recsSvc(esClient, $q, $http, graphUtils) {
   return {
     fetchProfile: fetchProfile
   };
 
-  function movieDetails(movieIds) {
+  function fetchMovieDetails(movieIds) {
     var movies = [];
     var deferred = $q.defer();
     esClient.mget({
@@ -36,7 +36,7 @@ function recsSvc(esClient, $q, $http) {
       id: user.id})
       .then(function(resp) {
         var likedMovies = resp._source.liked_movies;
-        movieDetails(likedMovies)
+        fetchMovieDetails(likedMovies)
         .then(function(movies) {
           user.likedMovies = movies;
           moreLikeThis(user);
@@ -83,7 +83,7 @@ function recsSvc(esClient, $q, $http) {
             "sample_size": 25 // this many relevant results used in sig terms
           },
           "connections": {
-              "vertices": [
+              "vertices": [ // how many degrees of kevin bacon
                   {"field": "liked_movies"}
               ]
           }
@@ -93,35 +93,44 @@ function recsSvc(esClient, $q, $http) {
     .success(function(resp) {
       // movies of depth 0 are statistically significant in the top <sample_size>
       // search results of the query
-      var relatedMovies = resp.vertices;
+      var allMovies = resp.vertices;
+      var usersMovies = graphUtils.parse(resp.vertices, resp.connections);
 
       // sort by depth so 0 depth first, helps
       // organize the graph
 
       relatedMovieIds = [];
-      angular.forEach(relatedMovies, function(movieVertex) {
+      angular.forEach(allMovies, function(movieVertex) {
         var movieId = movieVertex.term;
         relatedMovieIds.push(movieId);
       });
-      movieDetails(relatedMovieIds)
-      .then(function(movies) {
+      fetchMovieDetails(relatedMovieIds)
+      .then(function(movieDetails) {
+
         // hash by movieId
-        movieLookup = {};
-        angular.forEach(movies, function(movie) {
-          movieLookup[movie.mlensId] = movie;
+        movieDetailsLookup = {};
+        angular.forEach(movieDetails, function(movieDetail) {
+          movieDetailsLookup[movieDetail.mlensId] = movieDetail;
         });
 
-        // depth 0 movies are related to this user
+        // connect movies to one-another via graph
+        angular.forEach(usersMovies, function(userMovie) {
+          var currMovie = movieDetailsLookup[userMovie.term];
+          currMovie.related = [];
+          angular.forEach(userMovie.outbound, function(connectedMovie) {
+            var connectedMovieDetailed = movieDetailsLookup[connectedMovie.term];
+            currMovie.related.push(connectedMovieDetailed);
+          });
+        });
+
+        // add details to movies are related to this user
         var thisUsersMovies = [];
-        angular.forEach(relatedMovies, function(movieVertex) {
-          if (movieVertex.depth === 0) {
-            thisUsersMovies.push(movieLookup[movieVertex.term]);
-          }
-          // find connections to related movies from depth 0 movies
+        angular.forEach(usersMovies, function(movieVertex) {
+          thisUsersMovies.push(movieDetailsLookup[movieVertex.term]);
         });
 
         // organize a graph based on these details
-        user.relatedMovies = movies;
+        user.relatedMovies = thisUsersMovies;
       });
 
       // movies of depth 1 are significant to the movie at depth 0 it's connected to
