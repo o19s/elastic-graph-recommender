@@ -3,6 +3,7 @@ describe('Graph Utilities', function() {
 
   var graphUtils = null;
   beforeEach(inject(function(_graphUtils_) {
+    console.log('Injecting ' + _graphUtils_);
     graphUtils = _graphUtils_;
   }));
 
