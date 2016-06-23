@@ -6,4 +6,4 @@ dependencies:
     - ./app/depends.sh
 test:
   post:
-    ./app/test.sh
+    - ./app/test.sh
