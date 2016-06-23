@@ -1,9 +1,6 @@
 angular.module('recsApp')
   .factory('graphUtils', graphUtils);
 
-recsSvc.$inject = ['esClient', '$q', '$http', 'graphUtils'];
-
-
 // Utilities for making the Elastic graph response
 // easier to deal with
 function graphUtils() {
