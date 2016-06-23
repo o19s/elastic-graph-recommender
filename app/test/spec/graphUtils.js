@@ -7,7 +7,7 @@ describe('Graph Utilities', function() {
   }));
 
   it('has a property', function() {
-    expect(graphUtils).hasOwnProperty('parse');
+    expect(graphUtils.hasOwnProperty('parse')).toBeTruthy();
   });
 
 });
