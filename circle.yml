@@ -1,0 +1,9 @@
+machine:
+  node:
+    version: 0.11.8
+depedencies:
+  post:
+    - ./app/depends.sh
+test:
+  post:
+    ./app/test.sh
