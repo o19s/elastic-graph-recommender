@@ -1,6 +1,8 @@
 machine:
   node:
     version: 0.10.37
+  post:
+    - npm install -g bower
 dependencies:    
   post:
     - ./app/depends.sh
