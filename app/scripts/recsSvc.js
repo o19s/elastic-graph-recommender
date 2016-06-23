@@ -107,6 +107,11 @@ function recsSvc(esClient, $q, $http, graphUtils) {
       fetchMovieDetails(relatedMovieIds)
       .then(function(movieDetails) {
 
+        // the rest of this is just merging the movie details from
+        // the other collection with the graph structure we parsed
+        // out above
+        //
+
         // hash by movieId
         movieDetailsLookup = {};
         angular.forEach(movieDetails, function(movieDetail) {
@@ -116,11 +121,13 @@ function recsSvc(esClient, $q, $http, graphUtils) {
         // connect movies to one-another via graph
         angular.forEach(usersMovies, function(userMovie) {
           var currMovie = movieDetailsLookup[userMovie.term];
-          currMovie.related = [];
-          angular.forEach(userMovie.outbound, function(connectedMovie) {
-            var connectedMovieDetailed = movieDetailsLookup[connectedMovie.term];
-            currMovie.related.push(connectedMovieDetailed);
-          });
+          if (currMovie) {
+            currMovie.related = [];
+            angular.forEach(userMovie.outbound, function(connectedMovie) {
+              var connectedMovieDetailed = movieDetailsLookup[connectedMovie.term];
+              currMovie.related.push(connectedMovieDetailed);
+            });
+          }
         });
 
         // add details to movies are related to this user
