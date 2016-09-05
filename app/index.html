@@ -28,15 +28,9 @@ i<!doctype html>
           </div>
           <h1>Elasticsearch recommends...</h1>
           <div ng-if="recUsers.currUser">
-            <div class="row" ng-repeat="movie in recUsers.currUser.relatedMovies">
-              <div style="display: inline-block">
+            <div class="row"> 
+              <div ng-repeat="movie in recUsers.currUser.relatedMovies" style="display: inline-block">
                 <img src="{{movie.poster_path}}" title={{movie.title}}></img>
-              </div>
-              <div style="display: inline-block">
-                --&gt;
-              </div>
-              <div ng-repeat="subMovie in movie.related" style="display: inline-block">
-                <img src="{{subMovie.poster_path}}" title={{subMovie.title}}></img>
               </div>
             </div>
           </div>

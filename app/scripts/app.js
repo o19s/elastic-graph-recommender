@@ -15,7 +15,7 @@ angular.module('recsApp')
       '123': {name: 'Tom',  id: '123',  likedMovies: null},
       '5251': {name: 'Sue', id: '5251', likedMovies: null},
       '528': {name: 'Ed', id: '528', likedMovies: null},
-      '17': {name: 'Kate', id: '17', likedMovies: null}
+      '17': {name: '80s movies', id: '17', likedMovies: null}
     };
 
     recUsers.refetchProfile = function() {

@@ -34,6 +34,15 @@ The `app/` folder holds an angular app for querying Elasticsearch via the graph 
 
 See the `app/depends.sh` shell script for bootstrapping bower and npm dependencies
 
+### Run the app
+
+Start a dumb web server in the app/ dir, 
+
+```
+cd app/
+python -m SimpleHTTPServer
+```
+
 ### Tests
 
 Tests are run via Karma, you can run `app/test.sh` to run tests. When debugging, I use the following command:
