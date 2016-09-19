@@ -49,34 +49,45 @@ i<!doctype html>
 
 
         <div ng-show="appMode.tabSelect == 'custom'" class="container" ng-controller="CustomRecsCtrl as customRecs">
-          <div class="row">
-            <h3>Movies you like...</h3>
-						<div ng-repeat="movie in customRecs.recs.likes" style="display: inline-block">
-              <img src="{{movie.poster_path}}" title={{movie.title}}></img>
-            </div>
-
-          </div>
-          
-          <h1>Elasticsearch recommends...</h1>
-          <div ng-if="customRecs.recs.relatedMovies">
-            <div class="row"> 
-              <div ng-repeat="movie in customRecs.recs.relatedMovies" style="display: inline-block">
+          <div class="container">
+              
+                <div class="pull-right">
+              <h3>Movies you like...</h3>
+              <div ng-repeat="movie in customRecs.recs.likes" style="display: inline-block">
                 <img src="{{movie.poster_path}}" title={{movie.title}}></img>
+              </div>
+            </div>
+           
+            <div class="col-md-9">
+              <div >
+                <div class="input-group">
+                <input type="text" class="form-control" ng-change="customRecs.search.run()" ng-model="customRecs.search.searchString" placeholder="Search for...">
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="button">Go!</button>
+                </span>
+              </div>
+              <div >
+                <div ng-repeat="movie in customRecs.search.hits" style="display: inline-block">
+                  <img ng-click="customRecs.recs.likes.push(movie); customRecs.recs.run()" src="{{movie.poster_path}}" title={{movie.title}}></img>
+                </div>
+              </div>
+            </div>
+          
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <h1>Elasticsearch recommends...</h1>
+              <div ng-if="customRecs.recs.relatedMovies">
+                <div> 
+                  <div ng-repeat="movie in customRecs.recs.relatedMovies" style="display: inline-block">
+                    <img src="{{movie.poster_path}}" title={{movie.title}}></img>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
           
-          <div class="row">
-            <div class="input-group">
-						<input type="text" class="form-control" ng-change="customRecs.search.run()" ng-model="customRecs.search.searchString" placeholder="Search for...">
-						<span class="input-group-btn">
-							<button class="btn btn-default" type="button">Go!</button>
-						</span>
-					</div><!-- /input-group --> 
-
-						<div ng-repeat="movie in customRecs.search.hits" style="display: inline-block">
-              <img ng-click="customRecs.recs.likes.push(movie); customRecs.recs.run()" src="{{movie.poster_path}}" title={{movie.title}}></img>
-            </div>
           </div>
         </div>
 
