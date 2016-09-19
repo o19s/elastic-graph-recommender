@@ -6,7 +6,8 @@ recsSvc.$inject = ['esClient', '$q', '$http', 'graphUtils'];
 
 function recsSvc(esClient, $q, $http, graphUtils) {
   return {
-    fetchProfile: fetchProfile
+    fetchProfile: fetchProfile,
+    moreLikeThis: moreLikeThis
   };
 
   function fetchMovieDetails(movieIds) {
@@ -62,17 +63,26 @@ function recsSvc(esClient, $q, $http, graphUtils) {
     // But graph lets us go a step further and see the movies that are "special" ie
     // statistically interesting in the users more like me. Then we can find what's
     // special about those movies, and so on.
-    //
-    var esQuery=  {
-          "query": {
-              "more_like_this": {
+
+    if (user.hasOwnProperty('id')) {
+      query = {"more_like_this": {
                   "fields": ["liked_movies"],
                   "like": [
                       {"_id": user.id}
                   ],
                   "min_term_freq": 1
               }
-          },
+          };
+    } else if (user.hasOwnProperty('likes')) {
+      qStr = user.likeIds.join(' OR ');
+      query = {"query_string": {
+                "query": qStr,
+                "fields": ["liked_movies"]
+              }};
+    }
+
+    var esQuery=  {
+          "query": query,
           "vertices": [
               {
                   "field": "liked_movies"
@@ -105,7 +115,7 @@ function recsSvc(esClient, $q, $http, graphUtils) {
         relatedMovieIds.push(movieId);
       });
       fetchMovieDetails(relatedMovieIds)
-      .then(function(movieDetails) {
+      .then(function success(movieDetails) {
 
         // the rest of this is just merging the movie details from
         // the other collection with the graph structure we parsed
@@ -138,7 +148,11 @@ function recsSvc(esClient, $q, $http, graphUtils) {
 
         // organize a graph based on these details
         user.relatedMovies = thisUsersMovies;
-      });
+      }, function error(err) {
+        console.log(err);
+      }
+
+      );
 
       // movies of depth 1 are significant to the movie at depth 0 it's connected to
 
