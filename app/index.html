@@ -2,20 +2,30 @@ i<!doctype html>
 <html ng-app='recsApp'>
   <head>
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" ></link>
-    <script src="bower_components/angular/angular.js"></script>
+    <link rel="stylesheet" href="bower_components/angular-bootstrap/ui-bootstrap-csp.css"></link>
+    <script src="bower_components/jquery/dist/jquery.js"></script>
     <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/elasticsearch/elasticsearch.angular.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
     <script src="scripts/app.js"></script>  
     <script src="scripts/graphUtilsSvc.js"></script>  
     <script src="scripts/recsSvc.js"></script>  
+    <script src="scripts/appModeCtrl.js"></script>  
   </head>
     <body>
-      <div class="container">
+      <div class="container" ng-controller="AppModeCtrl as appMode">
         <div class="jumbotron">
           <h1>Elastic Graph Recommends...</h1>
           <p>Demos of Graph-drive recommendations</p>
         </div>
-        <div class="container" ng-controller="RecsUserCtrl as recUsers">
+        <ul class="nav nav-tabs">
+          <li role="presentation" ng-class="appMode.tabSelect == 'profile' ? 'active' : ''"><a ng-click="appMode.tabSelect='profile'" href="#">User Profiles</a></li>
+          <li role="presentation" ng-class="appMode.tabSelect == 'custom' ? 'active' : ''"><a href="#" ng-click="appMode.tabSelect='custom'">Build your Own!</a></li>
+        </ul>
+
+        <div ng-show="appMode.tabSelect == 'profile'" class="container" ng-controller="RecsUserCtrl as recUsers">
           <div class="row">
             <select ng-change="recUsers.refetchProfile()" ng-model="recUsers.selected">
               <option ng-repeat="(id, user) in recUsers.users" value="{{id}}">{{user.name}}</option>
@@ -34,6 +44,10 @@ i<!doctype html>
               </div>
             </div>
           </div>
+        </div>
+
+
+        <div ng-show="appMode.tabSelect == 'custom'" class="container" ng-controller="RecsUserCtrl as recUsers">
         </div>
 
       </div>
