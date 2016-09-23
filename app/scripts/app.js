@@ -11,21 +11,19 @@ angular.module('recsApp')
 angular.module('recsApp')
   .controller('RecsUserCtrl', function(esClient, recsSvc) {
     var recUsers = this;
-    recUsers.users = {
-      '123': {name: 'Tom',  id: '123',  likedMovies: null},
-      '5251': {name: 'Sue', id: '5251', likedMovies: null},
-      '528': {name: 'Ed', id: '528', likedMovies: null},
-      '17': {name: '80s movies', id: '17', likedMovies: null}
-    };
+    recUsers.users = [
+      {name: 'Tom',  id: '123',  likedMovies: null},
+      {name: 'Sue', id: '5251', likedMovies: null},
+      {name: 'Ed', id: '528', likedMovies: null},
+      {name: '80s movies', id: '17', likedMovies: null}
+    ];
+    recUsers.currentUser = recUsers.users[0];
 
-    recUsers.refetchProfile = function() {
+    recUsers.fetchProfile = function() {
       // fetch this users baskets
-      recUsers.currUser = recUsers.users[recUsers.selected];
-      recsSvc.fetchProfile(recUsers.currUser);
+      recsSvc.fetchProfile(recUsers.currentUser);
     };
-    recUsers.currUser = null;
-    recUsers.selected = null;
-
+    recUsers.fetchProfile();
   });
 
 
