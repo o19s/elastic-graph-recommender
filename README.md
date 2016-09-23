@@ -52,3 +52,7 @@ node_modules/karma/bin/karma start --no-single-run --log-level debug --auto-watc
 ```
 
 which runs Karma in Chrome, autowatching the source files. 
+
+# Deploying 
+
+- However you like to deploy stuff, there's a script [bootstrap.sh](bootstrap.sh) that lists the steps taken to provision an Ubunutu box with Elastic Graph. NOTE this script is meant for development purposes, it does several non-secure things like opens up Elasticsearch to the world and with very liberal CORS permissions.  
