@@ -28,9 +28,6 @@
 
         <div ng-show="appMode.tabSelect == 'profile'" class="container" ng-controller="RecsUserCtrl as recUsers">
           <div class="row">
-            <select ng-change="recUsers.refetchProfile()" ng-model="recUsers.selected">
-              <option ng-repeat="(id, user) in recUsers.users" value="{{id}}">{{user.name}}</option>
-            </select>
           </div>
           <div class="row" ng-if="recUsers.currUser">
             <div ng-repeat="movie in recUsers.currUser.likedMovies" style="display: inline-block">
@@ -47,6 +44,7 @@
           </div>
         </div>
 
+    <select ng-options="user.name for user in recUsers.users" ng-change="recUsers.fetchProfile()" ng-model="recUsers.currentUser" ></select>
 
         <div ng-show="appMode.tabSelect == 'custom'" class="container" ng-controller="CustomRecsCtrl as customRecs">
           <div class="container">
