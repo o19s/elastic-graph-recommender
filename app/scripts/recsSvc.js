@@ -99,7 +99,7 @@ function recsSvc(esClient, $q, $http, graphUtils) {
           }
 
     };
-    $http.post('http://localhost:9200/movielens/_graph/explore', esQuery)
+    $http.post(esBaseURL + '/movielens/_graph/explore', esQuery)
     .success(function(resp) {
       // movies of depth 0 are statistically significant in the top <sample_size>
       // search results of the query

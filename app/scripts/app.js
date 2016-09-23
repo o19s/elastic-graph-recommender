@@ -1,10 +1,10 @@
 angular.module('recsApp', ['elasticsearch']);
 
-
+var esBaseURL = 'http://localhost:1337/ec2-54-234-184-186.compute-1.amazonaws.com:9200';
 angular.module('recsApp')
 .service('esClient', function (esFactory) {
   return esFactory({
-    host: 'localhost:9200',
+    host: esBaseURL
   });
 });
 
