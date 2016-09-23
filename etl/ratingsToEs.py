@@ -27,12 +27,16 @@ def createMovielens(es):
     es.indices.create('movielens', body=settings)
 
 
-def indexToEs():
+def indexToEs(esUrl="http://localhost:9200"):
     from elasticsearch import Elasticsearch
     import elasticsearch.helpers
-    es = Elasticsearch()
+    es = Elasticsearch(esUrl)
     createMovielens(es)
     elasticsearch.helpers.bulk(es, esBaskets())
 
 if __name__ == "__main__":
-    indexToEs()
+    from sys import argv
+    esUrl="http://localhost:9200"
+    if len(argv) > 1:
+        esUrl = argv[1]
+    indexToEs(esUrl=esUrl)

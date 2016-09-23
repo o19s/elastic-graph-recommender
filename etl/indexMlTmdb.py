@@ -1,7 +1,7 @@
 import requests
 import json
 
-def reindex(analysisSettings={}, mappingSettings={}, movieDict={}, index='ml_tmdb'):
+def reindex(analysisSettings={}, mappingSettings={}, movieDict={}, index='ml_tmdb', esUrl='http://localhost:9200'):
     settings = { #A
         "settings": {
             "number_of_shards": 1, #B
@@ -12,8 +12,8 @@ def reindex(analysisSettings={}, mappingSettings={}, movieDict={}, index='ml_tmd
     if mappingSettings:
         settings['mappings'] = mappingSettings #C
 
-    resp = requests.delete("http://localhost:9200/%s" % index) #D
-    resp = requests.put("http://localhost:9200/%s" % index,
+    resp = requests.delete(esUrl + ("/%s" % index)) #D
+    resp = requests.put(esUrl + ("/%s" % index),
                         data=json.dumps(settings))
 
     bulkMovies = ""
@@ -22,8 +22,12 @@ def reindex(analysisSettings={}, mappingSettings={}, movieDict={}, index='ml_tmd
                             "_type": "movie",
                             "_id": id}}
         bulkMovies += json.dumps(addCmd) + "\n" + json.dumps(movie) + "\n"
-    requests.post("http://localhost:9200/_bulk", data=bulkMovies)
+    requests.post(esUrl + "/_bulk", data=bulkMovies)
 
 if __name__ == "__main__":
+    from sys import argv
+    esUrl="http://localhost:9200"
+    if len(argv) > 1:
+        esUrl = argv[1]
     movieDict = json.loads(open('ml_tmdb.json').read())
-    reindex(movieDict=movieDict)
+    reindex(movieDict=movieDict, esUrl=esUrl)
