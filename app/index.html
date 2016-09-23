@@ -1,4 +1,4 @@
-i<!doctype html>
+<!doctype html>
 <html ng-app='recsApp'>
   <head>
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" ></link>
@@ -9,11 +9,11 @@ i<!doctype html>
     <script src="bower_components/elasticsearch/elasticsearch.angular.js"></script>
     <script src="bower_components/angular-bootstrap/ui-bootstrap.js"></script>
     <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-    <script src="scripts/app.js"></script>  
-    <script src="scripts/graphUtilsSvc.js"></script>  
-    <script src="scripts/recsSvc.js"></script>  
-    <script src="scripts/appModeCtrl.js"></script>  
-    <script src="scripts/customRecsCtrl.js"></script>  
+    <script src="scripts/app.js"></script>
+    <script src="scripts/graphUtilsSvc.js"></script>
+    <script src="scripts/recsSvc.js"></script>
+    <script src="scripts/appModeCtrl.js"></script>
+    <script src="scripts/customRecsCtrl.js"></script>
   </head>
     <body>
       <div class="container" ng-controller="AppModeCtrl as appMode">
@@ -39,7 +39,7 @@ i<!doctype html>
           </div>
           <h1>Elasticsearch recommends...</h1>
           <div ng-if="recUsers.currUser">
-            <div class="row"> 
+            <div class="row">
               <div ng-repeat="movie in recUsers.currUser.relatedMovies" style="display: inline-block">
                 <img src="{{movie.poster_path}}" title={{movie.title}}></img>
               </div>
@@ -50,14 +50,14 @@ i<!doctype html>
 
         <div ng-show="appMode.tabSelect == 'custom'" class="container" ng-controller="CustomRecsCtrl as customRecs">
           <div class="container">
-              
+
                 <div class="pull-right">
               <h3>Movies you like...</h3>
               <div ng-repeat="movie in customRecs.recs.likes" style="display: inline-block">
                 <img src="{{movie.poster_path}}" title={{movie.title}}></img>
               </div>
             </div>
-           
+
             <div class="col-md-9">
               <div >
                 <div class="input-group">
@@ -72,14 +72,14 @@ i<!doctype html>
                 </div>
               </div>
             </div>
-          
+
           </div>
 
           <div class="row">
             <div class="col-md-12">
               <h1>Elasticsearch recommends...</h1>
               <div ng-if="customRecs.recs.relatedMovies">
-                <div> 
+                <div>
                   <div ng-repeat="movie in customRecs.recs.relatedMovies" style="display: inline-block">
                     <img src="{{movie.poster_path}}" title={{movie.title}}></img>
                   </div>
@@ -87,7 +87,7 @@ i<!doctype html>
               </div>
             </div>
           </div>
-          
+
           </div>
         </div>
 
