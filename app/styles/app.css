@@ -9,34 +9,72 @@
 /* BASE STYLES
 
 font-family: 'Roboto', sans-serif;
-font-family: 'Martel', serif;
 */
 
 body {
-  padding: 100px 50px;
+  padding: 50px 50px 300px;
   font-family: 'Roboto', sans-serif;
   font-size: 18px;
   line-height: 25px;
   font-weight: 300;
   background: #e9e9e9;
+  text-align: center;
 }
 h1, h2, h3 {
-  font-family: 'Martel', serif;
-  font-weight: 800;
-  font-size: 25px;
+  font-weight: 900;
+  font-size: 28px;
   line-height: 50px;
-  color: red;
-  margin-bottom: 25px;
+  color: #34a5be;
+  margin: 1em 0 .25em;
+  text-transform: uppercase;
+  letter-spacing: .125em;
 }
 h2 {
+  font-weight: 300;
   font-size: 20px;
   color: #999;
 }
 h3 {
-  font-family: 'Roboto', sans-serif;
   font-size: 18px;
   line-height: 25px;
   font-weight: 300;
+}
+p {
+  margin-bottom: 1em;
+  color: #999;
+}
+a {
+  display: inline-block;
+  text-decoration: none;
+  color: #34a5be;
+  /*border-bottom: 1px solid #ccc;*/
+}
+hr {
+  margin: 2em 0;
+  border: 1px solid #eee;
+  border-width: 1px 0 0;
+}
+select {
+  vertical-align: middle;
+}
+
+/* TABS */
+.tabs {
+  list-style: none inside;
+}
+.tabs li {
+  list-style: none inside;
+  display: inline-block;
+  padding: .5em 3em;
+  margin-right: .5em;
+  background: #eee;
+  border-radius: 3px;
+}
+.tabs li.active {
+  background: #34a5be;
+}
+.tabs li.active a {
+  color: #fff;
 }
 
 /* GRID */
@@ -44,10 +82,10 @@ h3 {
 .flex-grid {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
 }
-.col {
-  /*flex: 1;*/
-  padding: 5px;
+.flex-grid.justify {
+  justify-content: space-between;
 }
 @media (max-width: 600px) {
   .flex-grid {
@@ -55,10 +93,39 @@ h3 {
   }
 }
 
-.flex-grid.gutter {
-  display: flex;
-  justify-content: space-between;
+.col {
+  /*flex: 1;*/
+  padding: 5px;
 }
 .flex-grid.gutter .col {
   width: 32%;
+}
+
+/* MOVIE GRIDS */
+.single-row {
+  width: 100%;
+  overflow-x: scroll;
+  padding: 10px;
+  background: #dadada;
+  border: 1px solid #d9d9d9;
+  border-radius: 3px;
+}
+.single-row .flex-grid {
+  flex-wrap: nowrap;
+}
+.single-row .col {
+  flex: 1;
+}
+
+.movie-details {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  background: #fff;
+  box-shadow: 0 -2px 3px #ddd;
+  width: 100%;
+  min-height: 200px;
+}
+.movie-card {
+
 }

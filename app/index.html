@@ -15,12 +15,13 @@
   <script src="scripts/recsSvc.js"></script>
   <script src="scripts/appModeCtrl.js"></script>
   <script src="scripts/customRecsCtrl.js"></script>
-  <link href="https://fonts.googleapis.com/css?family=Martel:800|Roboto:300" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,900" rel="stylesheet">
 </head>
 <body ng-controller="AppModeCtrl as appMode">
   <header>
     <h1>Elastic Graph Recommendations</h1>
-    <p>Demos of Graph-drive recommendations</p>
+    <p>Lightweight recommendations with Elasticsearch</p>
+    <br>
   </header>
 
   <ul class="tabs">
@@ -28,18 +29,23 @@
     <li role="presentation" ng-class="appMode.tabSelect == 'custom' ? 'active' : ''"><a href="#" ng-click="appMode.tabSelect='custom'">Build your Own!</a></li>
   </ul>
 
+  <hr>
+
   <div ng-show="appMode.tabSelect == 'profile'" class="" ng-controller="RecsUserCtrl as recUsers">
-    <select ng-options="user.name for user in recUsers.users" ng-change="recUsers.fetchProfile()" ng-model="recUsers.currentUser" ></select>
+    <h2 ng-show="recUsers.currentUser.name">
+        Movies
+        <select ng-options="user.name for user in recUsers.users" ng-change="recUsers.fetchProfile()" ng-model="recUsers.currentUser" ></select>
+       likes
+     </h2>
 
-    <h2 ng-show="recUsers.currentUser.name">Movies {{recUsers.currentUser.name}} likes</h2>
-
-    <div class="flex-grid">
-      <div class="col" ng-repeat="movie in recUsers.currentUser.likedMovies">
-        <img src="{{movie.poster_path}}" title={{movie.title}}></img>
+    <div class="single-row">
+      <div class="flex-grid">
+        <div class="col" ng-repeat="movie in recUsers.currentUser.likedMovies">
+        </div>
       </div>
     </div>
 
-    <h1>Elasticsearch recommends...</h1>
+    <h3>Elasticsearch recommends</h3>
     <div class="flex-grid">
       <div class="col" ng-repeat="movie in recUsers.currentUser.relatedMovies">
         <img src="{{movie.poster_path}}" title={{movie.title}}></img>
@@ -47,16 +53,14 @@
     </div>
   </div>
 
-
   <div ng-show="appMode.tabSelect == 'custom'" class="container" ng-controller="CustomRecsCtrl as customRecs">
-
-    <h2>Movies you like...</h2>
+    <h2>Movies you like</h2>
     <div ng-repeat="movie in customRecs.recs.likes" style="display: inline-block">
       <img src="{{movie.poster_path}}" title={{movie.title}}></img>
     </div>
 
     <div class="input-group">
-      <input type="text" class="form-control" ng-change="customRecs.search.run()" ng-model="customRecs.search.searchString" placeholder="Search for...">
+      <input type="text" class="form-control" ng-change="customRecs.search.run()" ng-model="customRecs.search.searchString" placeholder="Search for">
         <button class="btn" type="button">Go!</button>
     </div>
     <div class="flex-grid">
@@ -66,7 +70,7 @@
     </div>
 
 
-    <h1>Elasticsearch recommends...</h1>
+    <h3>Elasticsearch recommends</h3>
     <div class="flex-grid" ng-if="customRecs.recs.relatedMovies">
       <div class="col" ng-repeat="movie in customRecs.recs.relatedMovies" style="display: inline-block">
         <img src="{{movie.poster_path}}" title={{movie.title}}></img>
