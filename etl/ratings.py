@@ -13,17 +13,59 @@ def movieLensRatings():
             else:
                 raise
 
-def userBaskets(minRating=4):
+def justMovieIds(moviesUserLiked):
+    movieFeatures = {'liked_movies': []}
+    for movie in moviesUserLiked:
+        movieFeatures['liked_movies'].append(movie['mlensId'])
+    return movieFeatures
+
+
+def bestGenre(moviesUserLiked, bestCutoffPercentage=35):
+    movieFeatures = {'liked_movies': [], 'liked_genres': set()}
+    genreCount = {}
+    for movie in moviesUserLiked:
+        movieFeatures['liked_movies'].append(movie['mlensId'])
+        try:
+            for genre in movie['genres']:
+                genreName = genre['name'].replace(' ', '_').lower()
+                movieFeatures['liked_genres'].add(genreName)
+                try:
+                    genreCount[genreName] += 1
+                except KeyError:
+                    genreCount[genreName] = 0
+        except KeyError:
+            pass # no genre for this movie
+
+    cutoff = (bestCutoffPercentage / 100.0) * len(moviesUserLiked)
+    for genreName, cnt in genreCount.items():
+        if cnt < cutoff:
+            movieFeatures['liked_genres'].remove(genreName)
+    movieFeatures['liked_genres'] = list(movieFeatures['liked_genres'])
+    return movieFeatures
+
+
+
+def userBaskets(minRating=4, buildBasket=bestGenre):
     """ Movies a given user likes """
+    import json
+    movieDict = json.loads(open('ml_tmdb.json').read())
     # Assumes sorted by user id
     print "Buliding baskets"
     lastUserId = -1
     basket = []
-    for userId, itemId, rating, timestamp in movieLensRatings():
+    skipped = set()
+    allmovies = set()
+    for userId, mlensId, rating, timestamp in movieLensRatings():
         if userId != lastUserId:
             lastUserId = userId
             if len(basket) > 0:
-                yield userId, basket
+                yield userId, buildBasket(basket)
             basket = []
         if rating >= minRating:
-            basket.append(str(itemId))
+            try:
+                allmovies.add(mlensId)
+                basket.append(movieDict[str(mlensId)])
+            except KeyError:
+                skipped.add(mlensId)
+                print "Skipped %s / %s " % (len(skipped), len(allmovies))
+                pass

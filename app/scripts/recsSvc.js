@@ -46,6 +46,47 @@ function recsSvc(esClient, $q, $http, graphUtils) {
 
   }
 
+
+  function constructAdHocQuery(likes) {
+
+    var genreCutoffPercentage = 35.0;
+
+    var likedIds = [];
+    var allGenres = {};
+    angular.forEach(likes, function(likedMovie) {
+      likedIds.push(likedMovie.mlensId);
+      angular.forEach(likedMovie.genres, function(genre) {
+        if (!allGenres.hasOwnProperty(genre.name)) {
+          allGenres[genre.name] = 0;
+        }
+        allGenres[genre.name] += 1;
+      });
+    });
+
+    // include popular genres
+    var cutoff = (genreCutoffPercentage / 100.0) * likes.length;
+    var likedGenres = [];
+    angular.forEach(allGenres, function(cnt, genre) {
+      if (cnt > cutoff) {
+        likedGenres.push(genre);
+      }
+    });
+
+    movieIdqStr = likedIds.join(' OR ');
+    likeGenreqStr = likedGenres.join(' OR ');
+    queryClause1 = {"query_string": {
+                      "query": movieIdqStr,
+                      "fields": ["liked_movies"]
+                    }};
+    queryClause2 = {"query_string": {
+                      "query": likeGenreqStr,
+                      "fields": ["liked_genres"]
+                    }};
+
+    return {'bool': {'should': [queryClause1, queryClause2]}};
+  }
+
+
   function moreLikeThis(user) {
     //POST movielens/_graph/explore
     //
@@ -74,11 +115,7 @@ function recsSvc(esClient, $q, $http, graphUtils) {
               }
           };
     } else if (user.hasOwnProperty('likes')) {
-      qStr = user.likeIds.join(' OR ');
-      query = {"query_string": {
-                "query": qStr,
-                "fields": ["liked_movies"]
-              }};
+      query = constructAdHocQuery(user.likes);
     }
 
     var esQuery=  {
@@ -90,7 +127,7 @@ function recsSvc(esClient, $q, $http, graphUtils) {
           ],
          "controls": {
             "use_significance": true,
-            "sample_size": 25 // this many relevant results used in sig terms
+            "sample_size": 200 // this many relevant results used in sig terms
           },
           "connections": {
               "vertices": [ // how many degrees of kevin bacon

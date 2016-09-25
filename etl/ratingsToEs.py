@@ -3,14 +3,14 @@ from ratings import userBaskets
 def esBaskets(minRating=4):
     """ Movies a given user likes """
     # Assumes sorted by user id
-    for userId, likedMovies in userBaskets(minRating=minRating):
+    for userId, basketDescription in userBaskets(minRating=minRating):
         yield {"_index": "movielens", "_type": "user",
-                "_id": userId, "_source": {"liked_movies": likedMovies}}
+                "_id": userId, "_source": basketDescription}
 
 
 
 def createMovielens(es):
-    #es.indices.delete('movielens', ignore=['400', '404'])
+    es.indices.delete('movielens', ignore=['400', '404'])
     settings = { #A
         "settings": {
             "number_of_shards": 1, #B

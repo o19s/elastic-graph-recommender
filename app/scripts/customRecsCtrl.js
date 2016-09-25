@@ -6,17 +6,7 @@ angular.module('recsApp')
     customRecs.recs = {likes: [], likeIds: []};
     customRecs.search = {hits: [], searchString: ''};
 
-    customRecs.recs.getLikeIds = function() {
-      var rVal = [];
-      angular.forEach(customRecs.recs.likes, function(movie) {
-        rVal.push(movie.mlensId);
-      });
-
-      return rVal;
-    };
-
     customRecs.recs.run = function() {
-      customRecs.recs.likeIds = customRecs.recs.getLikeIds();
       recsSvc.moreLikeThis(customRecs.recs);
     };
 
