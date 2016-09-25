@@ -53,9 +53,22 @@ function recsSvc(esClient, $q, $http, graphUtils) {
 
     var likedIds = [];
     var allGenres = {};
+    var allYears = {};
+
+
     angular.forEach(likes, function(likedMovie) {
       likedIds.push(likedMovie.mlensId);
       angular.forEach(likedMovie.genres, function(genre) {
+        if (likedMovie.hasOwnProperty('release_date')) {
+          var releaseYear = likedMovie.release_date.substr(0,4);
+          releaseHalfDecade = (5 * ~~(parseInt(releaseYear) / 5)).toString(); // hack to force integer division
+          if (!allYears.hasOwnProperty(releaseHalfDecade)) {
+            allYears[releaseHalfDecade] = 0;
+          }
+          else {
+            allYears[releaseHalfDecade] += 1;
+          }
+        }
         if (!allGenres.hasOwnProperty(genre.name)) {
           allGenres[genre.name] = 0;
         }
@@ -64,26 +77,46 @@ function recsSvc(esClient, $q, $http, graphUtils) {
     });
 
     // include popular genres
-    var cutoff = (genreCutoffPercentage / 100.0) * likes.length;
+    var genreCutoff = 0;
     var likedGenres = [];
     angular.forEach(allGenres, function(cnt, genre) {
-      if (cnt > cutoff) {
+      if (cnt > genreCutoff) {
         likedGenres.push(genre);
+      }
+    });
+
+    // include popular years
+    var cutoff = 0;
+    var likedHalfDecades = [];
+    angular.forEach(allYears, function(cnt, year) {
+      if (cnt > cutoff) {
+        likedHalfDecades.push(year);
       }
     });
 
     movieIdqStr = likedIds.join(' OR ');
     likeGenreqStr = likedGenres.join(' OR ');
+    likeYearQStr = likedHalfDecades.join(' OR ');
+
+
     queryClause1 = {"query_string": {
                       "query": movieIdqStr,
-                      "fields": ["liked_movies"]
+                      "fields": ["liked_movies"],
                     }};
     queryClause2 = {"query_string": {
                       "query": likeGenreqStr,
-                      "fields": ["liked_genres"]
+                      "fields": ["liked_genres"],
+                      "minimum_should_match": "50%",
+                      "boost": 0.1
+                    }};
+    queryClause3 = {"query_string": {
+                      "query": likeYearQStr,
+                      "fields": ["liked_years"],
+                      "minimum_should_match": "50%",
+                      "boost": 0.01
                     }};
 
-    return {'bool': {'should': [queryClause1, queryClause2]}};
+    return {'bool': {'should': [queryClause1, queryClause2, queryClause3]}};
   }
 
 
@@ -118,16 +151,22 @@ function recsSvc(esClient, $q, $http, graphUtils) {
       query = constructAdHocQuery(user.likes);
     }
 
+    likedIds = [];
+    angular.forEach(user.likes, function(likedMovie) {
+      likedIds.push(likedMovie.mlensId);
+    });
+
     var esQuery=  {
           "query": query,
           "vertices": [
               {
-                  "field": "liked_movies"
+                  "field": "liked_movies",
+                  "exclude": likedIds
               }
           ],
          "controls": {
             "use_significance": true,
-            "sample_size": 200 // this many relevant results used in sig terms
+            "sample_size": 50 // this many relevant results used in sig terms
           },
           "connections": {
               "vertices": [ // how many degrees of kevin bacon

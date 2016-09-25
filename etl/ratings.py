@@ -20,15 +20,15 @@ def justMovieIds(moviesUserLiked):
     return movieFeatures
 
 
-def bestGenre(moviesUserLiked, bestCutoffPercentage=35):
-    movieFeatures = {'liked_movies': [], 'liked_genres': set()}
+def bestGenres(moviesUserLiked, bestCutoffPercentage=35):
+    movieFeatures = {}
+    likedGenres = set()
     genreCount = {}
     for movie in moviesUserLiked:
-        movieFeatures['liked_movies'].append(movie['mlensId'])
         try:
             for genre in movie['genres']:
                 genreName = genre['name'].replace(' ', '_').lower()
-                movieFeatures['liked_genres'].add(genreName)
+                likedGenres.add(genreName)
                 try:
                     genreCount[genreName] += 1
                 except KeyError:
@@ -39,13 +39,44 @@ def bestGenre(moviesUserLiked, bestCutoffPercentage=35):
     cutoff = (bestCutoffPercentage / 100.0) * len(moviesUserLiked)
     for genreName, cnt in genreCount.items():
         if cnt < cutoff:
-            movieFeatures['liked_genres'].remove(genreName)
-    movieFeatures['liked_genres'] = list(movieFeatures['liked_genres'])
+            likedGenres.remove(genreName)
+    movieFeatures['liked_genres'] = list(likedGenres)
+    return movieFeatures
+
+def bestYears(moviesUserLiked, bestCutoffPercentage=15):
+    movieFeatures = {'liked_years': []}
+    from datetime import datetime
+    yearCnt = {}
+    for movie in moviesUserLiked:
+        try:
+            releaseDate = movie['release_date']
+            try:
+                releaseYear = datetime.strptime(releaseDate, '%Y-%m-%d').year
+            except ValueError:
+                raise KeyError('no parsable date')
+            # divide by 5, multiply by 5 to get in 5 year divisions
+            releaseYear = 5 * (releaseYear / 5)
+            try:
+                yearCnt[releaseYear] += 1
+            except KeyError:
+                yearCnt[releaseYear] = 0
+        except KeyError:
+            pass # no release date for this movie
+
+    cutoff = (bestCutoffPercentage / 100.0) * len(moviesUserLiked)
+    for year, cnt in yearCnt.items():
+        if cnt > cutoff:
+            movieFeatures['liked_years'].append(str(year))
+    return movieFeatures
+
+def allFeatures(moviesUserLiked):
+    movieFeatures = justMovieIds(moviesUserLiked);
+    movieFeatures['liked_years'] = bestYears(moviesUserLiked)['liked_years']
+    movieFeatures['liked_genres'] = bestGenres(moviesUserLiked)['liked_genres']
     return movieFeatures
 
 
-
-def userBaskets(minRating=4, buildBasket=bestGenre):
+def userBaskets(minRating=4, buildBasket=allFeatures):
     """ Movies a given user likes """
     import json
     movieDict = json.loads(open('ml_tmdb.json').read())
