@@ -107,6 +107,7 @@ input, submit, button {
 .flex-grid {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   align-items: center;
 }
 .flex-grid.justify {
@@ -150,7 +151,7 @@ input, submit, button {
   background: rgba(0, 0, 0, 0.4);
   background: rgba(0, 0, 0, 0.4);
   color: #fff;
-  padding: 5px;
+  padding: 5px 10px;
 }
 .col:hover .remove-movie {
   display: block;

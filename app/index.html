@@ -38,11 +38,10 @@
   <div>
 
     <div ng-show="customRecs.mode == 'define'">
-      <p>Welcome!</p>
 
-      <p>In this demo, we're demonstrating the power of Elasticsearch's Graph plugin to build and tune recommendor systems. We invite you to play, first by letting us know some movies that you like.</p>
+      <p>Welcome! In this demo, we're demonstrating <br><strong>the power of Elasticsearch's Graph plugin to build and tune recommendor systems</strong>.</p>
 
-      <h2>Start by searching for movies that you like</h2>
+      <h2>Start by adding a few movies that you like</h2>
       <div class="flex-grid">
         <div ng-repeat="movie in customRecs.recs.likes" class="col">
           <img src="{{movie.poster_path}}" title={{movie.title}}></img>
