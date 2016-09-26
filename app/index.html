@@ -38,12 +38,23 @@
   <div>
 
     <div ng-show="customRecs.mode == 'define'">
+<<<<<<< HEAD
       <h2>Start by searching for movies that you like</h2>
       <div class="flex-grid">
         <div ng-repeat="movie in customRecs.recs.likes" class="col">
           <img src="{{movie.poster_path}}" title={{movie.title}}></img>
           <span class="remove-movie" ng-click="customRecs.removeMovie(movie.id)">x</span>
         </div>
+=======
+
+      <p>Welcome!</p>
+
+      <p>In this demo, we're demonstrating the power of Elasticsearch's Graph plugin to build and tune recommendor systems. We invite you to play, first by letting us know some movies that you like.</p>
+
+      <h2>Movies you like</h2>
+      <div ng-repeat="movie in customRecs.recs.likes" style="display: inline-block">
+        <img src="{{movie.poster_path}}" title={{movie.title}}></img>
+>>>>>>> origin/master
       </div>
 
       <div class="input-group">
@@ -80,6 +91,16 @@
   </div>
 
   <div ng-show="customRecs.mode == 'relevance'">
+
+      <form>
+        <label>Use Release Date
+          <input type="checkbox" name="date" ng-model="customRecs.recs.useDate" ng-change="customRecs.setMode('relevance')"></input>
+        </label>
+
+        <label>Use Genre
+          <input type="checkbox" name="genre" ng-model="customRecs.recs.useGenre" ng-change="customRecs.setMode('relevance')"></input>
+        </label>
+      </form>
 
       <p>The recommendations we're showing you are user-user recommendations. The goal is to find users just like you, and let you know about movies they also like. This involves two phases:</p>
 

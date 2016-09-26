@@ -47,7 +47,7 @@ function recsSvc(esClient, $q, $http, graphUtils) {
   }
 
 
-  function constructAdHocQuery(likes, mode) {
+  function constructAdHocQuery(likes, mode, useDate, useGenre) {
 
 
     var genreCutoffPercentage = 35.0;
@@ -103,17 +103,18 @@ function recsSvc(esClient, $q, $http, graphUtils) {
     queryClause1 = {"query_string": {
                       "query": movieIdqStr,
                       "fields": ["liked_movies"],
+                      "minimum_should_match": "25%"
                     }};
     queryClause2 = {"query_string": {
                       "query": likeGenreqStr,
                       "fields": ["liked_genres"],
-                      "minimum_should_match": "50%",
+                      "minimum_should_match": "3",
                       "boost": 0.1
                     }};
     queryClause3 = {"query_string": {
                       "query": likeYearQStr,
                       "fields": ["liked_years"],
-                      "minimum_should_match": "50%",
+                      //"minimum_should_match": "50%",
                       "boost": 0.01
                     }};
 
@@ -122,12 +123,19 @@ function recsSvc(esClient, $q, $http, graphUtils) {
       return {'bool': {'should': [queryClause1]}};
     } else if (mode === 'relevance') {
       // some more features layered in
-      return {'bool': {'should': [queryClause1, queryClause2, queryClause3]}};
+      query = {'bool': {'should': [queryClause1]}};
+      if (useGenre) {
+        query.bool.should.push(queryClause2);
+      }
+      if (useDate) {
+        query.bool.should.push(queryClause3);
+      }
+      return query;
     }
   }
 
 
-  function moreLikeThis(user, mode) {
+  function moreLikeThis(user, mode, useDate, useGenre) {
     //POST movielens/_graph/explore
     //
     // The elastic graph plugin works by first sampling the top <sample_size>
@@ -145,7 +153,7 @@ function recsSvc(esClient, $q, $http, graphUtils) {
     // statistically interesting in the users more like me. Then we can find what's
     // special about those movies, and so on.
 
-    query = constructAdHocQuery(user.likes, mode);
+    query = constructAdHocQuery(user.likes, mode, useDate, useGenre);
 
     likedIds = [];
     angular.forEach(user.likes, function(likedMovie) {
@@ -162,7 +170,7 @@ function recsSvc(esClient, $q, $http, graphUtils) {
           ],
          "controls": {
             "use_significance": true,
-            "sample_size": 100 // this many relevant results used in sig terms
+            "sample_size": 50 // this many relevant results used in sig terms
           },
           "connections": {
               //"query": query, // guide only in the context of these recs, not globally
