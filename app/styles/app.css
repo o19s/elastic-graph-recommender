@@ -58,6 +58,12 @@ select {
   vertical-align: middle;
 }
 
+input, submit, button {
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+  font-size: 15px;
+  border-radius: 3px;
+}
 /* TABS */
 .tabs {
   list-style: none inside;
@@ -65,11 +71,30 @@ select {
 .tabs li {
   list-style: none inside;
   display: inline-block;
-  padding: .5em 3em;
-  margin-right: .5em;
+  padding: .5em;
+  margin-right: .25em;
   background: #eee;
   border-radius: 3px;
 }
+.tabs li:before {
+  display: block;
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-top: 50px solid transparent;
+  border-left: 50px solid red;
+  border-bottom: 50px solid transparent;
+}
+.tabs li:after {
+  display: block;
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-top: 50px solid transparent;
+  border-left: 50px solid red;
+  border-bottom: 50px solid transparent;
+}
+
 .tabs li.active {
   background: #34a5be;
 }
@@ -95,7 +120,8 @@ select {
 
 .col {
   /*flex: 1;*/
-  padding: 5px;
+  position: relative;
+  margin: 5px;
 }
 .flex-grid.gutter .col {
   width: 32%;
@@ -115,6 +141,19 @@ select {
 }
 .single-row .col {
   flex: 1;
+}
+.remove-movie {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  padding: 5px;
+}
+.col:hover .remove-movie {
+  display: block;
 }
 
 .movie-details {

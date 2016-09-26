@@ -36,24 +36,27 @@
   <hr>
 
   <div>
-    
+
     <div ng-show="customRecs.mode == 'define'">
-      <h2>Movies you like</h2>
-      <div ng-repeat="movie in customRecs.recs.likes" style="display: inline-block">
-        <img src="{{movie.poster_path}}" title={{movie.title}}></img>
+      <h2>Start by searching for movies that you like</h2>
+      <div class="flex-grid">
+        <div ng-repeat="movie in customRecs.recs.likes" class="col">
+          <img src="{{movie.poster_path}}" title={{movie.title}}></img>
+          <span class="remove-movie" ng-click="customRecs.removeMovie(movie.id)">x</span>
+        </div>
       </div>
 
       <div class="input-group">
-        <input type="text" class="form-control" ng-change="customRecs.search.run()" ng-model="customRecs.search.searchString" placeholder="Search for">
-          <button class="btn" type="button">Go!</button>
+        <input type="text" class="form-control" ng-change="customRecs.search.run()" ng-model="customRecs.search.searchString" placeholder="movie title">
+          <button class="btn" type="button">Search</button>
       </div>
       <div class="flex-grid">
         <div ng-repeat="movie in customRecs.search.hits" class="col">
-          <img ng-click="customRecs.recs.likes.push(movie);" src="{{movie.poster_path}}" title={{movie.title}}></img>
+          <img ng-click="customRecs.addMovie(movie);" src="{{movie.poster_path}}" title={{movie.title}}></img>
         </div>
       </div>
     </div>
-    
+
     <div ng-show="customRecs.mode == 'simple'">
 
       <p>The recommendations we're showing you are user-user recommendations. The goal is to find users just like you, and let you know about movies they also like. This involves two phases:</p>
@@ -65,7 +68,7 @@
 
       <p>Here, we find like users JUST using explicitly liked movies, below are what folks just like you also like</p>
 
-      
+
       <div class="flex-grid">
         <div class="col" ng-repeat="movie in customRecs.recs.relatedMovies" style="display: inline-block">
           <img src="{{movie.poster_path}}" title={{movie.title}}></img>
@@ -75,7 +78,7 @@
     </div>
 
   </div>
-    
+
   <div ng-show="customRecs.mode == 'relevance'">
 
       <p>The recommendations we're showing you are user-user recommendations. The goal is to find users just like you, and let you know about movies they also like. This involves two phases:</p>
@@ -87,7 +90,7 @@
 
       <p>Here, we find like users JUST using explicitly liked movies, below are what folks just like you also like</p>
 
-      
+
       <div class="flex-grid" ng-if="customRecs.recs.relatedMovies">
         <div class="col" ng-repeat="movie in customRecs.recs.relatedMovies" style="display: inline-block">
           <img src="{{movie.poster_path}}" title={{movie.title}}></img>
@@ -97,7 +100,7 @@
     </div>
 
   </div>
-  
+
 
   <div ng-show="customRecs.mode == 'profile'" class="" ng-controller="RecsUserCtrl as recUsers">
     <h2 ng-show="recUsers.currentUser.name">
@@ -126,7 +129,7 @@
 
 
     <h3>Elasticsearch recommends</h3>
-    
+
     <h3>Graph recommendations</h3>
     <div ng-if="customRecs.recs.relatedMovies">
       <div  ng-repeat="movie in customRecs.recs.relatedMovies" style="display: inline-block">

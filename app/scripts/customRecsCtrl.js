@@ -3,9 +3,24 @@ angular.module('recsApp')
     // Allow searches on title
     var customRecs = this;
 
-    customRecs.recs = {likes: [], likeIds: []};
+    var storedLikes = localStorage.movieLibrary ? JSON.parse(localStorage.movieLibrary) : null;
+    customRecs.recs = {likes:  storedLikes || []};
     customRecs.search = {hits: [], searchString: ''};
     customRecs.mode = 'define';
+
+    customRecs.addMovie = function (movie) {
+      customRecs.recs.likes.push(movie);
+      localStorage.movieLibrary = JSON.stringify(customRecs.recs.likes);
+    }
+
+    customRecs.removeMovie = function (movie) {
+      var movieIndex = customRecs.recs.likes.indexOf(movie);
+      if (movieIndex) {
+        customRecs.recs.likes.splice(movieIndex, 1);
+        localStorage.movieLibrary = JSON.stringify(customRecs.recs.likes);
+      }
+    }
+
 
     customRecs.recs.run = function(mode) {
       recsSvc.moreLikeThis(customRecs.recs, mode);
