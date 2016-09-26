@@ -47,7 +47,8 @@ function recsSvc(esClient, $q, $http, graphUtils) {
   }
 
 
-  function constructAdHocQuery(likes) {
+  function constructAdHocQuery(likes, mode) {
+
 
     var genreCutoffPercentage = 35.0;
 
@@ -81,7 +82,7 @@ function recsSvc(esClient, $q, $http, graphUtils) {
     var likedGenres = [];
     angular.forEach(allGenres, function(cnt, genre) {
       if (cnt > genreCutoff) {
-        likedGenres.push(genre);
+        likedGenres.push(genre.toLowerCase().replace('/ /g', '_'));
       }
     });
 
@@ -116,11 +117,17 @@ function recsSvc(esClient, $q, $http, graphUtils) {
                       "boost": 0.01
                     }};
 
-    return {'bool': {'should': [queryClause1, queryClause2, queryClause3]}};
+    if (!mode || mode === 'simple') {
+      // show not tuned results
+      return {'bool': {'should': [queryClause1]}};
+    } else if (mode === 'relevance') {
+      // some more features layered in
+      return {'bool': {'should': [queryClause1, queryClause2, queryClause3]}};
+    }
   }
 
 
-  function moreLikeThis(user) {
+  function moreLikeThis(user, mode) {
     //POST movielens/_graph/explore
     //
     // The elastic graph plugin works by first sampling the top <sample_size>
@@ -138,18 +145,7 @@ function recsSvc(esClient, $q, $http, graphUtils) {
     // statistically interesting in the users more like me. Then we can find what's
     // special about those movies, and so on.
 
-    if (user.hasOwnProperty('id')) {
-      query = {"more_like_this": {
-                  "fields": ["liked_movies"],
-                  "like": [
-                      {"_id": user.id}
-                  ],
-                  "min_term_freq": 1
-              }
-          };
-    } else if (user.hasOwnProperty('likes')) {
-      query = constructAdHocQuery(user.likes);
-    }
+    query = constructAdHocQuery(user.likes, mode);
 
     likedIds = [];
     angular.forEach(user.likes, function(likedMovie) {
@@ -166,9 +162,10 @@ function recsSvc(esClient, $q, $http, graphUtils) {
           ],
          "controls": {
             "use_significance": true,
-            "sample_size": 50 // this many relevant results used in sig terms
+            "sample_size": 100 // this many relevant results used in sig terms
           },
           "connections": {
+              //"query": query, // guide only in the context of these recs, not globally
               "vertices": [ // how many degrees of kevin bacon
                   {"field": "liked_movies"}
               ]

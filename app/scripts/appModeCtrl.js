@@ -1,5 +1,9 @@
 angular.module('recsApp')
-  .controller('AppModeCtrl', function(esClient, recsSvc) {
+  .controller('AppModeCtrl', function(esClient, recsSvc, $scope) {
     var appMode = this;
-    appMode.tabSelect = 'profile';
+    appMode.tabSelect = 'define';
+    appMode.setMode = function(newMode) {
+      $scope.$broadcast('modechanged', newMode);
+      appMode.tabSelect = newMode;
+    };
   });

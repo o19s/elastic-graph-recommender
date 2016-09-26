@@ -1,13 +1,21 @@
 angular.module('recsApp')
-  .controller('CustomRecsCtrl', function(esClient, recsSvc) {
+  .controller('CustomRecsCtrl', function(esClient, recsSvc, $scope, $log) {
     // Allow searches on title
     var customRecs = this;
 
     customRecs.recs = {likes: [], likeIds: []};
     customRecs.search = {hits: [], searchString: ''};
+    customRecs.mode = 'define';
 
-    customRecs.recs.run = function() {
-      recsSvc.moreLikeThis(customRecs.recs);
+    customRecs.recs.run = function(mode) {
+      recsSvc.moreLikeThis(customRecs.recs, mode);
+    };
+
+    customRecs.setMode = function(newMode) {
+      if (newMode === 'simple' || newMode === 'relevance' || newMode === 'graph') {
+        customRecs.recs.run(newMode);
+      }
+      customRecs.mode = newMode;
     };
 
     customRecs.search.run = function() {
