@@ -33,15 +33,15 @@
     <li role="presentation" ng-class="customRecs.mode == 'what-else' ? 'active' : ''"><a href="#" ng-click="customRecs.setMode('what-else')">What else?</a></li>
   </ul>
 
-  <hr>
-
   <div>
 
     <div ng-show="customRecs.mode == 'define'">
 
-      <p>Welcome! In this demo, we're demonstrating <br><strong>the power of Elasticsearch's Graph plugin to build and tune recommendor systems</strong>.</p>
+      <div class="intro">
+        <p>Welcome! In this demo, we're demonstrating the power of Elasticsearch's Graph plugin to build and tune recommendor systems.</p>
 
-      <h2>Start by adding a few movies that you like</h2>
+        <h2>Start by adding a few movies that you like</h2>
+      </div>
       <div class="flex-grid">
         <div ng-repeat="movie in customRecs.recs.likes" class="col">
           <img src="{{movie.poster_path}}" title={{movie.title}}></img>
@@ -62,14 +62,16 @@
 
     <div ng-show="customRecs.mode == 'simple'">
 
-      <p>The recommendations we're showing you are user-user recommendations. The goal is to find users just like you, and let you know about movies they also like. This involves two phases:</p>
+      <div class="intro">
+        <p>The recommendations we're showing you are user-user recommendations. The goal is to find users just like you, and let you know about movies they also like. This involves two phases:</p>
 
-      <ol>
-        <li>Using *search* to find users just like you</li>
-        <li>Seeing what movies 'pop' -- what do users like you like that others don't?</li>
-      </ol>
+        <ol>
+          <li>Using *search* to find users just like you</li>
+          <li>Seeing what movies 'pop' -- what do users like you like that others don't?</li>
+        </ol>
 
-      <p>Here, we find like users JUST using explicitly liked movies, below are what folks just like you also like</p>
+        <p>Here, we find like users JUST using explicitly liked movies, below are what folks just like you also like</p>
+      </div>
 
 
       <div class="flex-grid">
@@ -83,6 +85,7 @@
   </div>
 
   <div ng-show="customRecs.mode == 'relevance'">
+    <div class="intro">
 
       <form>
         <label>Use Release Date
@@ -103,17 +106,15 @@
 
       <p>Here, we find like users JUST using explicitly liked movies, below are what folks just like you also like</p>
 
+    </div>
 
-      <div class="flex-grid" ng-if="customRecs.recs.relatedMovies">
-        <div class="col" ng-repeat="movie in customRecs.recs.relatedMovies" style="display: inline-block">
-          <img src="{{movie.poster_path}}" title={{movie.title}}></img>
-        </div>
+    <div class="flex-grid" ng-if="customRecs.recs.relatedMovies">
+      <div class="col" ng-repeat="movie in customRecs.recs.relatedMovies" style="display: inline-block">
+        <img src="{{movie.poster_path}}" title={{movie.title}}></img>
       </div>
-
     </div>
 
   </div>
-
 
   <div ng-show="customRecs.mode == 'profile'" class="" ng-controller="RecsUserCtrl as recUsers">
     <h2 ng-show="recUsers.currentUser.name">

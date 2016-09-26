@@ -25,7 +25,7 @@ h1, h2, h3 {
   font-size: 28px;
   line-height: 50px;
   color: #34a5be;
-  margin: 1em 0 .25em;
+  margin: 0;
   text-transform: uppercase;
   letter-spacing: .125em;
 }
@@ -67,6 +67,9 @@ input, submit, button {
 /* TABS */
 .tabs {
   list-style: none inside;
+  margin: 0 -50px 0;
+  background: #fff;
+  padding: 15px 50px;
 }
 .tabs li {
   list-style: none inside;
@@ -76,7 +79,7 @@ input, submit, button {
   background: #eee;
   border-radius: 3px;
 }
-.tabs li:before {
+.tabs li a:before {
   display: block;
   position: absolute;
   width: 0;
@@ -85,7 +88,7 @@ input, submit, button {
   border-left: 50px solid red;
   border-bottom: 50px solid transparent;
 }
-.tabs li:after {
+.tabs li a:after {
   display: block;
   position: absolute;
   width: 0;
@@ -102,6 +105,19 @@ input, submit, button {
   color: #fff;
 }
 
+.intro {
+  margin: 0 -50px 25px;
+  padding: 40px 50px;
+  background: #fff;
+  box-shadow: 0 3px 3px #ccc;
+  font-size: 20px;
+  line-height: 40px;
+}
+.intro > * {
+  max-width: 600px;
+  text-align: left;
+  margin: 0 auto 25px;
+}
 /* GRID */
 
 .flex-grid {
@@ -168,4 +184,11 @@ input, submit, button {
 }
 .movie-card {
 
+}
+
+/* OTHER */
+
+
+.input-group {
+  margin: 25px 0;
 }
