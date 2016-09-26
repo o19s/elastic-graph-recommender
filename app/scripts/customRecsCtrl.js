@@ -3,17 +3,21 @@ angular.module('recsApp')
     // Allow searches on title
     var customRecs = this;
 
-    customRecs.recs = {likes: [], likeIds: []};
+    customRecs.recs = {likes: [], likeIds: [], useDate: true, useGenre: true};
     customRecs.search = {hits: [], searchString: ''};
     customRecs.mode = 'define';
 
-    customRecs.recs.run = function(mode) {
-      recsSvc.moreLikeThis(customRecs.recs, mode);
+    customRecs.recs.run = function(mode, useDate, useGenre) {
+      recsSvc.moreLikeThis(customRecs.recs, mode, useDate, useGenre);
     };
+
+    $scope.$watch("customRecs.recs.useGenre", function() {
+      $log.info("CHANGED");
+    });
 
     customRecs.setMode = function(newMode) {
       if (newMode === 'simple' || newMode === 'relevance' || newMode === 'graph') {
-        customRecs.recs.run(newMode);
+        customRecs.recs.run(newMode, customRecs.recs.useDate, customRecs.recs.useGenre);
       }
       customRecs.mode = newMode;
     };

@@ -1,5 +1,18 @@
 movieLensPath = 'ml-20m/ratings.csv'
 
+def mergeDicts(*dict_args):
+    '''
+    Given any number of dicts, shallow copy and merge into a new dict,
+    precedence goes to key value pairs in latter dicts.
+
+    Taken from:
+    http://stackoverflow.com/a/26853961/8123
+    '''
+    result = {}
+    for dictionary in dict_args:
+        result.update(dictionary)
+    return result
+
 def movieLensRatings():
     import csv
     ml_ratings_f = open(movieLensPath)
@@ -13,18 +26,18 @@ def movieLensRatings():
             else:
                 raise
 
-def justMovieIds(moviesUserLiked):
-    movieFeatures = {'liked_movies': []}
-    for movie in moviesUserLiked:
-        movieFeatures['liked_movies'].append(movie['mlensId'])
+def justMovieIds(userMovies, label='liked_movies'):
+    movieFeatures = {label: []}
+    for movie in userMovies:
+        movieFeatures[label].append(movie['mlensId'])
     return movieFeatures
 
 
-def bestGenres(moviesUserLiked, bestCutoffPercentage=35):
+def bestGenres(userMovies, bestCutoffPercentage=35, label='liked_genres'):
     movieFeatures = {}
     likedGenres = set()
     genreCount = {}
-    for movie in moviesUserLiked:
+    for movie in userMovies:
         try:
             for genre in movie['genres']:
                 genreName = genre['name'].replace(' ', '_').lower()
@@ -36,18 +49,18 @@ def bestGenres(moviesUserLiked, bestCutoffPercentage=35):
         except KeyError:
             pass # no genre for this movie
 
-    cutoff = (bestCutoffPercentage / 100.0) * len(moviesUserLiked)
+    cutoff = (bestCutoffPercentage / 100.0) * len(userMovies)
     for genreName, cnt in genreCount.items():
         if cnt < cutoff:
             likedGenres.remove(genreName)
-    movieFeatures['liked_genres'] = list(likedGenres)
+    movieFeatures[label] = list(likedGenres)
     return movieFeatures
 
-def bestYears(moviesUserLiked, bestCutoffPercentage=15):
-    movieFeatures = {'liked_years': []}
+def bestYears(userMovies, bestCutoffPercentage=15, label='liked_years'):
+    movieFeatures = {label: []}
     from datetime import datetime
     yearCnt = {}
-    for movie in moviesUserLiked:
+    for movie in userMovies:
         try:
             releaseDate = movie['release_date']
             try:
@@ -63,36 +76,37 @@ def bestYears(moviesUserLiked, bestCutoffPercentage=15):
         except KeyError:
             pass # no release date for this movie
 
-    cutoff = (bestCutoffPercentage / 100.0) * len(moviesUserLiked)
+    cutoff = (bestCutoffPercentage / 100.0) * len(userMovies)
     for year, cnt in yearCnt.items():
         if cnt > cutoff:
-            movieFeatures['liked_years'].append(str(year))
+            movieFeatures[label].append(str(year))
     return movieFeatures
 
-def allFeatures(moviesUserLiked):
-    movieFeatures = justMovieIds(moviesUserLiked);
-    movieFeatures['liked_years'] = bestYears(moviesUserLiked)['liked_years']
-    movieFeatures['liked_genres'] = bestGenres(moviesUserLiked)['liked_genres']
-    return movieFeatures
+def allFeatures(moviesUserLiked, moviesUserDisliked):
+    likedDescriptors =  mergeDicts(justMovieIds(moviesUserLiked),
+                                   bestYears(moviesUserLiked),
+                                   bestGenres(moviesUserLiked))
+    dislikedDescriptors =  mergeDicts(justMovieIds(moviesUserDisliked, label='disliked_movies'),
+                                      bestYears(moviesUserDisliked, label='disliked_years'),
+                                      bestGenres(moviesUserDisliked, label='disliked_genres'))
+
+    return mergeDicts(likedDescriptors, dislikedDescriptors)
 
 
-def userBaskets(minRating=4, buildBasket=allFeatures):
+def userBaskets(likeRating=4, dislikeRating=2, buildBasket=allFeatures):
     """ Movies a given user likes """
     import json
     movieDict = json.loads(open('ml_tmdb.json').read())
     # Assumes sorted by user id
     print "Buliding baskets"
     lastUserId = -1
-    basket = []
+    moviesLiked = []
+    moviesDisliked = []
     skipped = set()
     allmovies = set()
-    for userId, mlensId, rating, timestamp in movieLensRatings():
-        if userId != lastUserId:
-            lastUserId = userId
-            if len(basket) > 0:
-                yield userId, buildBasket(basket)
-            basket = []
-        if rating >= minRating:
+
+    def addMovieIf(basket, check):
+        if check:
             try:
                 allmovies.add(mlensId)
                 basket.append(movieDict[str(mlensId)])
@@ -100,3 +114,13 @@ def userBaskets(minRating=4, buildBasket=allFeatures):
                 skipped.add(mlensId)
                 print "Skipped %s / %s " % (len(skipped), len(allmovies))
                 pass
+
+    for userId, mlensId, rating, timestamp in movieLensRatings():
+        if userId != lastUserId:
+            lastUserId = userId
+            if len(moviesLiked) > 0:
+                yield userId, buildBasket(moviesLiked, moviesDisliked)
+            moviesLiked = []
+            moviesDisliked = []
+        addMovieIf(moviesLiked, rating >= likeRating)
+        addMovieIf(moviesDisliked, rating <= dislikeRating)

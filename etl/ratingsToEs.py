@@ -1,9 +1,9 @@
 from ratings import userBaskets
 
-def esBaskets(minRating=4):
+def esBaskets():
     """ Movies a given user likes """
     # Assumes sorted by user id
-    for userId, basketDescription in userBaskets(minRating=minRating):
+    for userId, basketDescription in userBaskets():
         yield {"_index": "movielens", "_type": "user",
                 "_id": userId, "_source": basketDescription}
 
@@ -14,6 +14,16 @@ def createMovielens(es):
     settings = { #A
         "settings": {
             "number_of_shards": 1, #B
+            "index": {
+                "analysis": {
+                    "analyzer": {
+                        "default": {
+                            "tokenizer": "keyword",
+                            "filters": ["lowercase"]
+                        }
+                    }
+                }
+            }
         },
         "mappings": {
             "user": {
