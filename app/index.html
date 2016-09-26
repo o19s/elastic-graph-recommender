@@ -124,6 +124,7 @@
     <div class="single-row">
       <div class="flex-grid">
         <div class="col" ng-repeat="movie in recUsers.currentUser.likedMovies">
+          <img src="{{movie.poster_path}}" title={{movie.title}}></img>
         </div>
       </div>
     </div>
