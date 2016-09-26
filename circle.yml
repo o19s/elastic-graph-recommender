@@ -7,3 +7,8 @@ dependencies:
 test:
   post:
     - ./app/test.sh
+deployment:
+  prod:
+    branch: master
+    commands:
+      - aws s3 sync app s3://es-recommendor/ --delete
