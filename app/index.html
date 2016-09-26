@@ -38,23 +38,16 @@
   <div>
 
     <div ng-show="customRecs.mode == 'define'">
-<<<<<<< HEAD
+      <p>Welcome!</p>
+
+      <p>In this demo, we're demonstrating the power of Elasticsearch's Graph plugin to build and tune recommendor systems. We invite you to play, first by letting us know some movies that you like.</p>
+
       <h2>Start by searching for movies that you like</h2>
       <div class="flex-grid">
         <div ng-repeat="movie in customRecs.recs.likes" class="col">
           <img src="{{movie.poster_path}}" title={{movie.title}}></img>
           <span class="remove-movie" ng-click="customRecs.removeMovie(movie.id)">x</span>
         </div>
-=======
-
-      <p>Welcome!</p>
-
-      <p>In this demo, we're demonstrating the power of Elasticsearch's Graph plugin to build and tune recommendor systems. We invite you to play, first by letting us know some movies that you like.</p>
-
-      <h2>Movies you like</h2>
-      <div ng-repeat="movie in customRecs.recs.likes" style="display: inline-block">
-        <img src="{{movie.poster_path}}" title={{movie.title}}></img>
->>>>>>> origin/master
       </div>
 
       <div class="input-group">
@@ -157,12 +150,12 @@
         <div>
         <img src="{{movie.poster_path}}" title={{movie.title}}></img>
 
-                       <div style="display: inline-block">
-                            --&gt;
-                           </div>
-                        <div ng-repeat="subMovie in movie.related" style="display: inline-block">
-                             <img src="{{subMovie.poster_path}}" title={{subMovie.title}}></img>
-                          </div>
+         <div style="display: inline-block">
+            --&gt;
+         </div>
+          <div ng-repeat="subMovie in movie.related" style="display: inline-block">
+            <img src="{{subMovie.poster_path}}" title={{subMovie.title}}></img>
+          </div>
         </div>
         <br/>
       </div>
