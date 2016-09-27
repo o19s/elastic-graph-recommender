@@ -4,14 +4,21 @@ angular.module('recsApp')
     var customRecs = this;
 
     var storedLikes = localStorage.movieLibrary ? JSON.parse(localStorage.movieLibrary) : null;
-    customRecs.recs = {likes:  storedLikes || [], useDate: true, useGenre: true};
+    customRecs.recs = {likes:
+                       storedLikes || [],
+                       config: {
+                         useDate: false,
+                         useGenre: false,
+                         numSimilarUsers: 1000,
+                         minMovies: 50 // %
+                       }};
     customRecs.search = {hits: [], searchString: ''};
     customRecs.mode = 'define';
 
     customRecs.addMovie = function (movie) {
       customRecs.recs.likes.push(movie);
       localStorage.movieLibrary = JSON.stringify(customRecs.recs.likes);
-    }
+    };
 
     customRecs.removeMovie = function (movie) {
       var movieIndex = customRecs.recs.likes.indexOf(movie);
@@ -19,23 +26,25 @@ angular.module('recsApp')
         customRecs.recs.likes.splice(movieIndex, 1);
         localStorage.movieLibrary = JSON.stringify(customRecs.recs.likes);
       }
-    }
-
-
-    customRecs.recs.run = function(mode, useDate, useGenre) {
-      recsSvc.moreLikeThis(customRecs.recs, mode, useDate, useGenre);
     };
 
-    $scope.$watch("customRecs.recs.useGenre", function() {
-      $log.info("CHANGED");
-    });
-
-    customRecs.setMode = function(newMode) {
-      if (newMode === 'simple' || newMode === 'relevance' || newMode === 'graph') {
-        customRecs.recs.run(newMode, customRecs.recs.useDate, customRecs.recs.useGenre);
+    customRecs.recs.setMode = function(mode) {
+      if (mode === "relevance" || mode === "graph") {
+        customRecs.recs.config.useDate = true;
+        customRecs.recs.config.useGenre = true;
+      } else {
+        customRecs.recs.config.useDate = false;
+        customRecs.recs.config.useGenre = false;
       }
-      customRecs.mode = newMode;
+      customRecs.mode = mode;
+      customRecs.recs.run();
     };
+
+
+    customRecs.recs.run = function() {
+      recsSvc.recommend(customRecs.recs, customRecs.recs.config);
+    };
+
 
     customRecs.search.run = function() {
       // search ES by title, show results

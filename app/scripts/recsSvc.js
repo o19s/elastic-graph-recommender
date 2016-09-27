@@ -6,8 +6,7 @@ recsSvc.$inject = ['esClient', '$q', '$http', 'graphUtils'];
 
 function recsSvc(esClient, $q, $http, graphUtils) {
   return {
-    fetchProfile: fetchProfile,
-    moreLikeThis: moreLikeThis
+    recommend: recommend
   };
 
   function fetchMovieDetails(movieIds) {
@@ -30,24 +29,7 @@ function recsSvc(esClient, $q, $http, graphUtils) {
 
   }
 
-  function fetchProfile(user) {
-    esClient.get({
-      index: 'movielens',
-      type: 'user',
-      id: user.id})
-      .then(function(resp) {
-        var likedMovies = resp._source.liked_movies;
-        fetchMovieDetails(likedMovies)
-        .then(function(movies) {
-          user.likedMovies = movies;
-          moreLikeThis(user);
-        });
-      });
-
-  }
-
-
-  function constructAdHocQuery(likes, mode, useDate, useGenre) {
+  function constructAdHocQuery(likes, config) {
 
 
     var genreCutoffPercentage = 35.0;
@@ -103,39 +85,32 @@ function recsSvc(esClient, $q, $http, graphUtils) {
     queryClause1 = {"query_string": {
                       "query": movieIdqStr,
                       "fields": ["liked_movies"],
-                      "minimum_should_match": "25%"
+                      "minimum_should_match": "" + config.minMovies + "%"
                     }};
     queryClause2 = {"query_string": {
                       "query": likeGenreqStr,
                       "fields": ["liked_genres"],
-                      "minimum_should_match": "3",
                       "boost": 0.1
                     }};
     queryClause3 = {"query_string": {
                       "query": likeYearQStr,
                       "fields": ["liked_years"],
-                      //"minimum_should_match": "50%",
                       "boost": 0.01
                     }};
 
-    if (!mode || mode === 'simple') {
-      // show not tuned results
-      return {'bool': {'should': [queryClause1]}};
-    } else if (mode === 'relevance') {
-      // some more features layered in
-      query = {'bool': {'should': [queryClause1]}};
-      if (useGenre) {
-        query.bool.should.push(queryClause2);
-      }
-      if (useDate) {
-        query.bool.should.push(queryClause3);
-      }
-      return query;
+    // some more features layered in
+    query = {'bool': {'should': [queryClause1]}};
+    if (config.useGenre) {
+      query.bool.should.push(queryClause2);
     }
+    if (config.useDate) {
+      query.bool.should.push(queryClause3);
+    }
+    return query;
   }
 
 
-  function moreLikeThis(user, mode, useDate, useGenre) {
+  function recommend(user, config) {
     //POST movielens/_graph/explore
     //
     // The elastic graph plugin works by first sampling the top <sample_size>
@@ -153,7 +128,7 @@ function recsSvc(esClient, $q, $http, graphUtils) {
     // statistically interesting in the users more like me. Then we can find what's
     // special about those movies, and so on.
 
-    query = constructAdHocQuery(user.likes, mode, useDate, useGenre);
+    query = constructAdHocQuery(user.likes, config);
 
     likedIds = [];
     angular.forEach(user.likes, function(likedMovie) {
@@ -170,7 +145,7 @@ function recsSvc(esClient, $q, $http, graphUtils) {
           ],
          "controls": {
             "use_significance": true,
-            "sample_size": 50 // this many relevant results used in sig terms
+            "sample_size": config.numSimilarUsers // this many relevant results used in sig terms
           },
           "connections": {
               //"query": query, // guide only in the context of these recs, not globally

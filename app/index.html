@@ -19,29 +19,28 @@
 </head>
 <body ng-controller="CustomRecsCtrl as customRecs">
   <header>
-    <h1>Elastic Graph Recommendations</h1>
+    <h1>Elastic Graph Recommender Sandbox</h1>
     <p>Lightweight recommendations with Elasticsearch</p>
     <br>
   </header>
 
   <ul class="tabs">
     <!--<li role="presentation" ng-class="customRecs.mode == 'profile' ? 'active' : ''"><a ng-click="customRecs.mode='profile'" href="#">User Profiles</a></li>-->
-    <li role="presentation" ng-class="customRecs.mode == 'define' ? 'active' : ''"><a href="#" ng-click="customRecs.setMode('define')">Your Favorite Movies</a></li>
-    <li role="presentation" ng-class="customRecs.mode == 'simple' ? 'active' : ''"><a href="#" ng-click="customRecs.setMode('simple')">Searching for Similar Users</a></li>
-    <li role="presentation" ng-class="customRecs.mode == 'relevance' ? 'active' : ''"><a href="#" ng-click="customRecs.setMode('relevance')">Better Relevance</a></li>
-    <li role="presentation" ng-class="customRecs.mode == 'graph' ? 'active' : ''"><a href="#" ng-click="customRecs.setMode('graph')">Graph Operations</a></li>
-    <li role="presentation" ng-class="customRecs.mode == 'what-else' ? 'active' : ''"><a href="#" ng-click="customRecs.setMode('what-else')">What else?</a></li>
+    <li role="presentation" ng-class="customRecs.mode == 'define' ? 'active' : ''"><a href="#" ng-click="customRecs.recs.setMode('define')">Your Favorite Movies</a></li>
+    <li role="presentation" ng-class="customRecs.mode == 'simple' ? 'active' : ''"><a href="#" ng-click="customRecs.recs.setMode('simple')">Searching for Similar Users</a></li>
+    <li role="presentation" ng-class="customRecs.mode == 'relevance' ? 'active' : ''"><a href="#" ng-click="customRecs.recs.setMode('relevance')">Tuning Relevance</a></li>
+    <li role="presentation" ng-class="customRecs.mode == 'graph' ? 'active' : ''"><a href="#" ng-click="customRecs.recs.setMode('graph')">Graph Operations</a></li>
+    <li role="presentation" ng-class="customRecs.mode == 'what-else' ? 'active' : ''"><a href="#" ng-click="customRecs.recs.setMode('what-else')">What else?</a></li>
   </ul>
 
   <div>
-
+    
     <div ng-show="customRecs.mode == 'define'">
-
       <div class="intro">
-        <p>Welcome! In this demo, we're demonstrating the power of Elasticsearch's Graph plugin to build and tune recommendor systems.</p>
-
-        <h2>Start by adding a few movies that you like</h2>
+          <p>Welcome! In this demo, we're demonstrating the power of Elasticsearch's Graph plugin to build and tune recommendor systems.</p>
       </div>
+        <h2>Start by adding a few movies that you like below:</h2>
+
       <div class="flex-grid">
         <div ng-repeat="movie in customRecs.recs.likes" class="col">
           <img src="{{movie.poster_path}}" title={{movie.title}}></img>
@@ -49,28 +48,44 @@
         </div>
       </div>
 
-      <div class="input-group">
-        <input type="text" class="form-control" ng-change="customRecs.search.run()" ng-model="customRecs.search.searchString" placeholder="movie title">
-          <button class="btn" type="button">Search</button>
-      </div>
-      <div class="flex-grid">
-        <div ng-repeat="movie in customRecs.search.hits" class="col">
-          <img ng-click="customRecs.addMovie(movie);" src="{{movie.poster_path}}" title={{movie.title}}></img>
+       
+          <div class="input-group">
+          <input type="text" class="form-control" ng-change="customRecs.search.run()" ng-model="customRecs.search.searchString" placeholder="movie title">
+            <button class="btn" type="button">Search</button>
         </div>
+        <div class="flex-grid">
+          <div ng-repeat="movie in customRecs.search.hits" class="col">
+            <img ng-click="customRecs.addMovie(movie);" src="{{movie.poster_path}}" title={{movie.title}}></img>
+          </div>
+        </div>
+
       </div>
     </div>
+
 
     <div ng-show="customRecs.mode == 'simple'">
 
       <div class="intro">
-        <p>The recommendations we're showing you are user-user recommendations. The goal is to find users just like you, and let you know about movies they also like. This involves two phases:</p>
+        <p>Elastic Graph uses search to find users <em>most similar to you</em>, finding movies you've missed but folks just like you consider significant.</p>
+        
 
-        <ol>
-          <li>Using *search* to find users just like you</li>
-          <li>Seeing what movies 'pop' -- what do users like you like that others don't?</li>
-        </ol>
+        <p>Play with user matchmaking settings, and see what you think of the results</p>
+        <ul>
+          <li><label>How many similar users should be examined?
+             <input type="number" name="sample-size" ng-model="customRecs.recs.config.numSimilarUsers" min="1" max="1000" ng-change="customRecs.recs.run()"></input>
+           </label></li>
 
-        <p>Here, we find like users JUST using explicitly liked movies, below are what folks just like you also like</p>
+          <li><label>What percentage of movies should overlap?
+            <input type="number" name="sample-size" ng-model="customRecs.recs.config.minMovies" min="1" max="200" ng-change="customRecs.recs.run()"></input><span>%</span>
+           </label></li>
+
+
+        </ul>
+        
+        <p><a href="#">Learn More</a></p>
+
+
+
       </div>
 
 
@@ -86,25 +101,22 @@
 
   <div ng-show="customRecs.mode == 'relevance'">
     <div class="intro">
+      
+      <p>Quite a lot of <a href="">Relevance Work</a> can be brought to bear to improve Elastic Graph's ability to find similar users. Below, you can select whether to look for users that like the genres you do.</p>
+      
 
       <form>
         <label>Use Release Date
-          <input type="checkbox" name="date" ng-model="customRecs.recs.useDate" ng-change="customRecs.setMode('relevance')"></input>
+          <input type="checkbox" name="date" ng-model="customRecs.recs.config.useDate" ng-change="customRecs.recs.run()"></input>
         </label>
 
         <label>Use Genre
-          <input type="checkbox" name="genre" ng-model="customRecs.recs.useGenre" ng-change="customRecs.setMode('relevance')"></input>
+          <input type="checkbox" name="genre" ng-model="customRecs.recs.config.useGenre" ng-change="customRecs.recs.run()"></input>
         </label>
       </form>
+      
+      <p>What do you think of the results? What other data about you/users could improve how easily we find users similar to you?</p>
 
-      <p>The recommendations we're showing you are user-user recommendations. The goal is to find users just like you, and let you know about movies they also like. This involves two phases:</p>
-
-      <ol>
-        <li>Using *search* to find users just like you</li>
-        <li>Seeing what movies 'pop' -- what do users like you like that others don't?</li>
-      </ol>
-
-      <p>Here, we find like users JUST using explicitly liked movies, below are what folks just like you also like</p>
 
     </div>
 
@@ -115,53 +127,16 @@
     </div>
 
   </div>
+    <div ng-show="customRecs.mode == 'graph'">
 
-  <div ng-show="customRecs.mode == 'profile'" class="" ng-controller="RecsUserCtrl as recUsers">
-    <h2 ng-show="recUsers.currentUser.name">
-        Movies
-        <select ng-options="user.name for user in recUsers.users" ng-change="recUsers.fetchProfile()" ng-model="recUsers.currentUser" ></select>
-       likes
-     </h2>
+      <div class="intro">
+        <p>So far we've just scratched the surface of Elastic Graph. We can do so much more. Here, we're reaching beyond direct recommendations to find relationships between movies and </p>
 
-    <div class="single-row">
-      <div class="flex-grid">
-        <div class="col" ng-repeat="movie in recUsers.currentUser.likedMovies">
-          <img src="{{movie.poster_path}}" title={{movie.title}}></img>
-        </div>
-      </div>
     </div>
+  
 
-    <h3>Elasticsearch recommends</h3>
-    <div class="flex-grid">
-      <div class="col" ng-repeat="movie in recUsers.currentUser.relatedMovies">
-        <img src="{{movie.poster_path}}" title={{movie.title}}></img>
-      </div>
-    </div>
   </div>
 
-  <div ng-show="customRecs.mode == 'custom'" class="container" ng-controller="CustomRecsCtrl as customRecs">
-
-
-    <h3>Elasticsearch recommends</h3>
-
-    <h3>Graph recommendations</h3>
-    <div ng-if="customRecs.recs.relatedMovies">
-      <div  ng-repeat="movie in customRecs.recs.relatedMovies" style="display: inline-block">
-        <div>
-        <img src="{{movie.poster_path}}" title={{movie.title}}></img>
-
-         <div style="display: inline-block">
-            --&gt;
-         </div>
-          <div ng-repeat="subMovie in movie.related" style="display: inline-block">
-            <img src="{{subMovie.poster_path}}" title={{subMovie.title}}></img>
-          </div>
-        </div>
-        <br/>
-      </div>
-    </div>
-  </div>
-  </div>
 
 </body>
 </html>
