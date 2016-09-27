@@ -44,7 +44,7 @@
       <div class="flex-grid">
         <div ng-repeat="movie in customRecs.recs.likes" class="col">
           <img src="{{movie.poster_path}}" title={{movie.title}}></img>
-          <span class="remove-movie" ng-click="customRecs.removeMovie(movie.id)">x</span>
+          <span class="remove-movie" ng-click="customRecs.removeMovie(movie)">x</span>
         </div>
       </div>
 
@@ -86,6 +86,7 @@
 
 
 
+        <p>Here, we find like users JUST using explicitly liked movies, below are what folks just like you also like.</p>
       </div>
 
 
@@ -109,9 +110,11 @@
         <label>Use Release Date
           <input type="checkbox" name="date" ng-model="customRecs.recs.config.useDate" ng-change="customRecs.recs.run()"></input>
         </label>
+        &nbsp;
 
         <label>Use Genre
           <input type="checkbox" name="genre" ng-model="customRecs.recs.config.useGenre" ng-change="customRecs.recs.run()"></input>
+        </label>
         </label>
       </form>
       

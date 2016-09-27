@@ -22,7 +22,7 @@ angular.module('recsApp')
 
     customRecs.removeMovie = function (movie) {
       var movieIndex = customRecs.recs.likes.indexOf(movie);
-      if (movieIndex) {
+      if (movieIndex && movieIndex >= 0) {
         customRecs.recs.likes.splice(movieIndex, 1);
         localStorage.movieLibrary = JSON.stringify(customRecs.recs.likes);
       }
