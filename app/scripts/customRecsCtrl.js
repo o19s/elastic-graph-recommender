@@ -10,7 +10,8 @@ angular.module('recsApp')
                          useDate: false,
                          useGenre: false,
                          numSimilarUsers: 1000,
-                         minMovies: 50 // %
+                         minMovies: 50, // %
+                         globalGuidance: false
                        }};
     customRecs.search = {hits: [], searchString: ''};
     customRecs.mode = 'define';
@@ -57,7 +58,7 @@ angular.module('recsApp')
                 "title": {
                   "query": customRecs.search.searchString
                 }
-                        }},
+              }},
               {
                 "match_phrase_prefix": {
                   "title": customRecs.search.searchString

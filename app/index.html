@@ -131,7 +131,19 @@
       <div class="intro">
         <p>We can do so much more with Elastic Graph. Let's reach beyond direct recommendations to see how your recommendations are linked to others. We can guide globally, or scope our graph-based guidance to users similar to you.</p>
 
+
+        <form name="graph-mode">
+          <label>Show what everyone likes
+          <input type="radio" ng-model="customRecs.recs.config.globalGuidance" ng-change="customRecs.recs.run()" ng-value="true">
+          </label>
+          <label>Show just movies I probably like
+          <input type="radio" ng-model="customRecs.recs.config.globalGuidance" ng-change="customRecs.recs.run()" ng-value="false">
+          </label>
+        </form>
+
         <div class="graph-list">
+          <h3 style="display: inline">Considering?</h3>
+          <h3 style="display: inline; margin-left: 5em;">You might also like:</h3>
         <ul>
             <li ng-repeat="movie in customRecs.recs.relatedMovies|limitTo:3">
               <div class="seed-movie">

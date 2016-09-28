@@ -29,18 +29,35 @@ function recsSvc(esClient, $q, $http, graphUtils) {
 
   }
 
+  function constructGuidingQuery(likes, config) {
+    if (config.globalGuidance) {
+      return {
+        "match_all": {
+        }
+      };
+    }
+    var likedIds = [];
+    angular.forEach(likes, function(likedMovie) {
+      likedIds.push(likedMovie.mlensId);
+    });
+    movieIdqStr = likedIds.join(' OR ');
+    queryClause1 = {"query_string": {
+                      "query": movieIdqStr,
+                      "fields": ["liked_movies"],
+                      "minimum_should_match": "" + config.minMovies + "%"
+                    }};
+    return queryClause1;
+  }
+
   function constructAdHocQuery(likes, config) {
 
 
     var genreCutoffPercentage = 35.0;
-
-    var likedIds = [];
     var allGenres = {};
     var allYears = {};
 
 
     angular.forEach(likes, function(likedMovie) {
-      likedIds.push(likedMovie.mlensId);
       angular.forEach(likedMovie.genres, function(genre) {
         if (likedMovie.hasOwnProperty('release_date')) {
           var releaseYear = likedMovie.release_date.substr(0,4);
@@ -77,16 +94,10 @@ function recsSvc(esClient, $q, $http, graphUtils) {
       }
     });
 
-    movieIdqStr = likedIds.join(' OR ');
     likeGenreqStr = likedGenres.join(' OR ');
     likeYearQStr = likedHalfDecades.join(' OR ');
 
 
-    queryClause1 = {"query_string": {
-                      "query": movieIdqStr,
-                      "fields": ["liked_movies"],
-                      "minimum_should_match": "" + config.minMovies + "%"
-                    }};
     queryClause2 = {"query_string": {
                       "query": likeGenreqStr,
                       "fields": ["liked_genres"],
@@ -99,7 +110,7 @@ function recsSvc(esClient, $q, $http, graphUtils) {
                     }};
 
     // some more features layered in
-    query = {'bool': {'should': [queryClause1]}};
+    query = {'bool': {'should': [constructGuidingQuery(likes, config)]}};
     if (config.useGenre) {
       query.bool.should.push(queryClause2);
     }
@@ -128,7 +139,9 @@ function recsSvc(esClient, $q, $http, graphUtils) {
     // statistically interesting in the users more like me. Then we can find what's
     // special about those movies, and so on.
 
-    query = constructAdHocQuery(user.likes, config);
+    var qConfig = angular.copy(config);
+    qConfig.globalGuidance = false;
+    query = constructAdHocQuery(user.likes, qConfig);
 
     likedIds = [];
     angular.forEach(user.likes, function(likedMovie) {
@@ -148,7 +161,7 @@ function recsSvc(esClient, $q, $http, graphUtils) {
             "sample_size": config.numSimilarUsers // this many relevant results used in sig terms
           },
           "connections": {
-              //"query": query, // guide only in the context of these recs, not globally
+              "query": constructGuidingQuery(user.likes, {minMovies: 0, globalGuidance: config.globalGuidance}), // guide only in the context of these recs, not globally
               "vertices": [ // how many degrees of kevin bacon
                   {"field": "liked_movies"}
               ]
