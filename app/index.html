@@ -72,7 +72,7 @@
         <p>Play with user matchmaking settings, and see what you think of the results</p>
         <ul>
           <li><label>How many similar users should be examined?
-             <input type="number" name="sample-size" ng-model="customRecs.recs.config.numSimilarUsers" min="1" max="1000" ng-change="customRecs.recs.run()"></input>
+             <input type="number" name="sample-size" ng-model="customRecs.recs.config.numSimilarUsers" min="0" max="1000" ng-change="customRecs.recs.run()"></input>
            </label></li>
 
           <li><label>What percentage of movies should overlap?
@@ -99,18 +99,23 @@
   <div ng-show="customRecs.mode == 'relevance'">
     <div class="intro">
       
-      <p>Quite a lot of <a href="">Relevance Work</a> can be brought to bear to improve Elastic Graph's ability to find similar users. Below, you can match directly to user's preferred genres and movie release dates</p>
+      <p>Quite a lot of <a href="http://manning.com/books/relevant-search">Relevance Work</a> can be brought to bear to improve Elastic Graph's ability to find similar users. Below, you can match directly to specific attributes of preferred movies:</p>
       
 
       <form>
-        <label>Use Release/Age
+        <h3>Use preferred movie's:</h3>
+        <label>Release Date
           <input type="checkbox" name="date" ng-model="customRecs.recs.config.useDate" ng-change="customRecs.recs.run()"></input>
         </label>
         &nbsp;
 
-        <label>Use Preferred Genre
+        <label>Genre
           <input type="checkbox" name="genre" ng-model="customRecs.recs.config.useGenre" ng-change="customRecs.recs.run()"></input>
         </label>
+        &nbsp;
+        
+        <label>Description Text
+          <input type="checkbox" name="genre" ng-model="customRecs.recs.config.useOverviews" ng-change="customRecs.recs.run()"></input>
         </label>
       </form>
       

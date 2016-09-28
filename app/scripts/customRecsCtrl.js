@@ -9,9 +9,11 @@ angular.module('recsApp')
                        config: {
                          useDate: false,
                          useGenre: false,
+                         useOverviews: false,
                          numSimilarUsers: 1000,
                          minMovies: 50, // %
                          globalGuidance: false
+
                        }};
     customRecs.search = {hits: [], searchString: ''};
     customRecs.mode = 'define';
@@ -23,19 +25,16 @@ angular.module('recsApp')
 
     customRecs.removeMovie = function (movie) {
       var movieIndex = customRecs.recs.likes.indexOf(movie);
-      if (movieIndex && movieIndex >= 0) {
+      if (movieIndex >= 0) {
         customRecs.recs.likes.splice(movieIndex, 1);
         localStorage.movieLibrary = JSON.stringify(customRecs.recs.likes);
       }
     };
 
     customRecs.recs.setMode = function(mode) {
-      if (mode === "relevance" || mode === "graph") {
+      if (mode === "relevance") {
         customRecs.recs.config.useDate = true;
         customRecs.recs.config.useGenre = true;
-      } else {
-        customRecs.recs.config.useDate = false;
-        customRecs.recs.config.useGenre = false;
       }
       customRecs.mode = mode;
       customRecs.recs.run();

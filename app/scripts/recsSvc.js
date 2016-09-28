@@ -41,10 +41,11 @@ function recsSvc(esClient, $q, $http, graphUtils) {
       likedIds.push(likedMovie.mlensId);
     });
     movieIdqStr = likedIds.join(' OR ');
+    var minShouldMatch = config.minMovies ? config.minMovies : 0;
     queryClause1 = {"query_string": {
                       "query": movieIdqStr,
                       "fields": ["liked_movies"],
-                      "minimum_should_match": "" + config.minMovies + "%"
+                      "minimum_should_match": "" + (minShouldMatch) + "%"
                     }};
     return queryClause1;
   }
@@ -55,9 +56,13 @@ function recsSvc(esClient, $q, $http, graphUtils) {
     var genreCutoffPercentage = 35.0;
     var allGenres = {};
     var allYears = {};
+    var overviewTexts = [];
 
 
     angular.forEach(likes, function(likedMovie) {
+      if (likedMovie.hasOwnProperty('overview')) {
+        overviewTexts.push(likedMovie.overview);
+      }
       angular.forEach(likedMovie.genres, function(genre) {
         if (likedMovie.hasOwnProperty('release_date')) {
           var releaseYear = likedMovie.release_date.substr(0,4);
@@ -94,6 +99,8 @@ function recsSvc(esClient, $q, $http, graphUtils) {
       }
     });
 
+    // include overview text
+
     likeGenreqStr = likedGenres.join(' OR ');
     likeYearQStr = likedHalfDecades.join(' OR ');
 
@@ -109,6 +116,11 @@ function recsSvc(esClient, $q, $http, graphUtils) {
                       "boost": 1.0
                     }};
 
+    queryClause4 = {"more_like_this": {
+                      "fields": ["liked_overview"],
+                      "like": overviewTexts
+                   }};
+
     // some more features layered in
     query = {'bool': {'should': [constructGuidingQuery(likes, config)]}};
     if (config.useGenre) {
@@ -116,6 +128,9 @@ function recsSvc(esClient, $q, $http, graphUtils) {
     }
     if (config.useDate) {
       query.bool.should.push(queryClause3);
+    }
+    if (config.useOverviews) {
+      query.bool.should.push(queryClause4);
     }
     return query;
   }
@@ -163,7 +178,8 @@ function recsSvc(esClient, $q, $http, graphUtils) {
           "connections": {
               "query": constructGuidingQuery(user.likes, {minMovies: 0, globalGuidance: config.globalGuidance}), // guide only in the context of these recs, not globally
               "vertices": [ // how many degrees of kevin bacon
-                  {"field": "liked_movies"}
+                  {"field": "liked_movies",
+                   "exclude": likedIds}
               ]
           }
 

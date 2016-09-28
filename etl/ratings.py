@@ -82,10 +82,22 @@ def bestYears(userMovies, bestCutoffPercentage=15, label='liked_years'):
             movieFeatures[label].append(str(year))
     return movieFeatures
 
+def allOverviewText(userMovies, label='liked_overview'):
+    movieFeatures = {label: []}
+    print "Appending %s movies overview" % len(userMovies)
+    for movie in userMovies:
+        try:
+            movieFeatures[label].append(movie['overview'])
+        except KeyError:
+            pass
+    return movieFeatures
+
+
 def allFeatures(moviesUserLiked, moviesUserDisliked):
     likedDescriptors =  mergeDicts(justMovieIds(moviesUserLiked),
                                    bestYears(moviesUserLiked),
-                                   bestGenres(moviesUserLiked))
+                                   bestGenres(moviesUserLiked),
+                                   allOverviewText(moviesUserLiked))
     dislikedDescriptors =  mergeDicts(justMovieIds(moviesUserDisliked, label='disliked_movies'),
                                       bestYears(moviesUserDisliked, label='disliked_years'),
                                       bestGenres(moviesUserDisliked, label='disliked_genres'))

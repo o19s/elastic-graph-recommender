@@ -27,9 +27,14 @@ def createMovielens(es):
         },
         "mappings": {
             "user": {
+                "_all": {
+                  "enabled": False
+                },
                 "properties": {
-                    "liked_movies": {
-                        "type": "string"
+                    "liked_overview": {
+                        "type": "string",
+                        "analyzer": "english",
+                        "position_increment_gap": 100
                     }
                 }
             }
@@ -40,7 +45,7 @@ def createMovielens(es):
 def indexToEs(esUrl="http://localhost:9200"):
     from elasticsearch import Elasticsearch
     import elasticsearch.helpers
-    es = Elasticsearch(esUrl)
+    es = Elasticsearch(esUrl, timeout=30)
     createMovielens(es)
     elasticsearch.helpers.bulk(es, esBaskets())
 
