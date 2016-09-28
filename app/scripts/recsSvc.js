@@ -90,12 +90,12 @@ function recsSvc(esClient, $q, $http, graphUtils) {
     queryClause2 = {"query_string": {
                       "query": likeGenreqStr,
                       "fields": ["liked_genres"],
-                      "boost": 0.1
+                      "boost": 1.0
                     }};
     queryClause3 = {"query_string": {
                       "query": likeYearQStr,
                       "fields": ["liked_years"],
-                      "boost": 0.01
+                      "boost": 1.0
                     }};
 
     // some more features layered in

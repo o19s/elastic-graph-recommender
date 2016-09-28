@@ -192,3 +192,13 @@ input, submit, button {
 .input-group {
   margin: 25px 0;
 }
+
+.graph-list ul li {
+    list-style: none;
+    margin-bottom: 10px;
+}
+
+.graph-list .seed-movie {
+    margin-right: 40px;
+    display: inline;
+}
