@@ -118,6 +118,34 @@ input, submit, button {
   text-align: left;
   margin: 0 auto 25px;
 }
+
+/* FOOTER */
+.page-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+.page-footer > * {
+  background: #333;
+  color: #fff;
+  clear: both;
+}
+.toggle-about {
+  float: right;
+  margin: 0;
+  padding: 5px 2em;
+  color: #aaa;
+  font-size: 80%;
+}
+.footer-content {
+  padding: 2em;
+}
+.footer-content img {
+  display: block;
+  margin: 0 auto 10px;
+}
+
 /* GRID */
 
 .flex-grid {
