@@ -14,13 +14,14 @@
   <script src="scripts/graphUtilsSvc.js"></script>
   <script src="scripts/recsSvc.js"></script>
   <script src="scripts/appModeCtrl.js"></script>
+  <script src="scripts/likedMovieSearchCtrl.js"></script>
   <script src="scripts/customRecsCtrl.js"></script>
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,900" rel="stylesheet">
 </head>
 <body ng-controller="CustomRecsCtrl as customRecs">
   <header>
     <h1>Elastic Graph Recommender Sandbox</h1>
-    <p>Lightweight recommendations with Elasticsearch</p>
+    <p>Simple, real-time recommendations with Elasticsearch</p>
     <br>
   </header>
 
@@ -35,7 +36,7 @@
 
   <div>
     
-    <div ng-show="customRecs.mode == 'define'">
+    <div  ng-controller="LikedMovieSearchCtrl as movieSearch" ng-show="customRecs.mode == 'define'">
       <div class="intro">
           <p>Welcome! In this demo, we're demonstrating the power of Elasticsearch's Graph plugin to build and tune recommendor systems.</p>
       </div>
@@ -49,17 +50,16 @@
       </div>
 
        
-          <div class="input-group">
-          <input type="text" class="form-control" ng-change="customRecs.search.run()" ng-model="customRecs.search.searchString" placeholder="movie title">
+        <div class="input-group">
+          <input type="text" class="form-control" ng-change="movieSearch.run()" ng-model="movieSearch.searchString" placeholder="movie title">
             <button class="btn" type="button">Search</button>
         </div>
         <div class="flex-grid">
-          <div ng-repeat="movie in customRecs.search.hits" class="col">
+          <div ng-repeat="movie in movieSearch.hits" class="col">
             <img ng-click="customRecs.addMovie(movie);" src="{{movie.poster_path}}" title={{movie.title}}></img>
           </div>
         </div>
 
-      </div>
     </div>
 
 
@@ -82,7 +82,6 @@
 
         </ul>
         
-        <p>Here, we find like users JUST using explicitly liked movies, below are what folks just like you also like.</p>
       </div>
 
 
@@ -137,11 +136,12 @@
         <p>We can do so much more with Elastic Graph. Let's reach beyond direct recommendations to see how your recommendations are linked to others. We can guide globally, or scope our graph-based guidance to users similar to you.</p>
 
 
+        <h3>Scoped to:</h3>
         <form name="graph-mode">
-          <label>Show what everyone likes
+          <label>Everyone
           <input type="radio" ng-model="customRecs.recs.config.globalGuidance" ng-change="customRecs.recs.run()" ng-value="true">
           </label>
-          <label>Show just movies I probably like
+          <label>Users like me
           <input type="radio" ng-model="customRecs.recs.config.globalGuidance" ng-change="customRecs.recs.run()" ng-value="false">
           </label>
         </form>
@@ -163,8 +163,20 @@
         </div>
 
     </div>
+    
+  </div>
   
-
+  
+  <div ng-show="customRecs.mode == 'what-else'">
+    <div class="intro">
+      <p>How else can Elastic Graph improve the relevance in your search/discovery apps?</p>
+      <li><em>Personalized Search</em> -- use Elastic Graph's rankings to reweight search results for a user.</li>
+      <li><em>Social Search</em> -- can we reweight search according to direct social relationships? </li>
+      <li><em>Taste Profiles</em> -- bucketing recommendations and search results by specific tastes, genres, or other notable properties</li> 
+      
+      
+      <p><a href="http://opensourceconnections.com/services/relevancy">Learn more</a> about OpenSource Connections relevance services.</p>
+    </div>
   </div>
 
 

@@ -1,5 +1,10 @@
 import json
 
+def enrich(movie):
+    """ Enrich for search purposes """
+    if 'title' in movie:
+        movie['title_sent'] = 'SENTINEL_BEGIN ' + movie['title']
+
 def reindex(es, analysisSettings={}, mappingSettings={}, movieDict={}, index='ml_tmdb', esUrl='http://localhost:9200'):
     import elasticsearch.helpers
     settings = {
@@ -19,6 +24,7 @@ def reindex(es, analysisSettings={}, mappingSettings={}, movieDict={}, index='ml
         for id, movie in movieDict.iteritems():
             if 'release_date' in movie and movie['release_date'] == "":
                 del movie['release_date']
+            enrich(movie)
             addCmd = {"_index": index, #E
                       "_type": "movie",
                       "_id": id,
