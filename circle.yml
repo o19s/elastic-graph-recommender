@@ -11,4 +11,4 @@ deployment:
   prod:
     branch: master
     commands:
-      - aws s3 sync app s3://es-recommendor/ --delete
+      - aws s3 sync app s3://recommendor.dev.o19s.com/ --delete
