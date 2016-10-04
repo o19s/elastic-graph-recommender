@@ -1,33 +1,38 @@
-import requests
 import json
 
-def reindex(analysisSettings={}, mappingSettings={}, movieDict={}, index='ml_tmdb', esUrl='http://localhost:9200'):
-    settings = { #A
+def reindex(es, analysisSettings={}, mappingSettings={}, movieDict={}, index='ml_tmdb', esUrl='http://localhost:9200'):
+    import elasticsearch.helpers
+    settings = {
         "settings": {
-            "number_of_shards": 1, #B
+            "number_of_shards": 1,
             "index": {
-                "analysis" : analysisSettings, #C
+                "analysis" : analysisSettings,
             }}}
 
     if mappingSettings:
         settings['mappings'] = mappingSettings #C
 
-    resp = requests.delete(esUrl + ("/%s" % index)) #D
-    resp = requests.put(esUrl + ("/%s" % index),
-                        data=json.dumps(settings))
+    es.indices.delete(index, ignore=['400', '404'])
+    es.indices.create(index, body=settings)
 
-    bulkMovies = ""
-    for id, movie in movieDict.iteritems():
-        addCmd = {"index": {"_index": index, #E
-                            "_type": "movie",
-                            "_id": id}}
-        bulkMovies += json.dumps(addCmd) + "\n" + json.dumps(movie) + "\n"
-    requests.post(esUrl + "/_bulk", data=bulkMovies)
+    def bulkDocs(movieDict):
+        for id, movie in movieDict.iteritems():
+            if 'release_date' in movie and movie['release_date'] == "":
+                del movie['release_date']
+            addCmd = {"_index": index, #E
+                      "_type": "movie",
+                      "_id": id,
+                      "_source": movie}
+            yield addCmd
+
+    elasticsearch.helpers.bulk(es, bulkDocs(movieDict))
 
 if __name__ == "__main__":
+    from elasticsearch import Elasticsearch
     from sys import argv
     esUrl="http://localhost:9200"
     if len(argv) > 1:
         esUrl = argv[1]
+    es = Elasticsearch(esUrl, timeout=30)
     movieDict = json.loads(open('ml_tmdb.json').read())
-    reindex(movieDict=movieDict, esUrl=esUrl)
+    reindex(es, movieDict=movieDict, esUrl=esUrl)
