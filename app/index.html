@@ -67,7 +67,7 @@
 
       <div class="intro">
         <p>Elastic Graph uses search to find users <em>most similar to you</em>, finding movies you've missed but folks just like you consider significant.</p>
-        
+
 
         <p>Play with user matchmaking settings, and see what you think of the results</p>
         <ul>
@@ -81,7 +81,6 @@
 
 
         </ul>
-        
       </div>
 
 
@@ -97,9 +96,9 @@
 
   <div ng-show="customRecs.mode == 'relevance'">
     <div class="intro">
-      
+
       <p>Quite a lot of <a href="http://manning.com/books/relevant-search">Relevance Work</a> can be brought to bear to improve Elastic Graph's ability to find similar users. Below, you can match directly to specific attributes of preferred movies:</p>
-      
+
 
       <form>
         <h3>Use preferred movie's:</h3>
@@ -112,12 +111,12 @@
           <input type="checkbox" name="genre" ng-model="customRecs.recs.config.useGenre" ng-change="customRecs.recs.run()"></input>
         </label>
         &nbsp;
-        
+
         <label>Description Text
           <input type="checkbox" name="genre" ng-model="customRecs.recs.config.useOverviews" ng-change="customRecs.recs.run()"></input>
         </label>
       </form>
-      
+
       <p>What do you think of the results? What other data about you/users could improve how easily we find users similar to you?</p>
 
 
@@ -130,10 +129,10 @@
     </div>
 
   </div>
-    <div ng-show="customRecs.mode == 'graph'">
+  <div ng-show="customRecs.mode == 'graph'">
 
-      <div class="intro">
-        <p>We can do so much more with Elastic Graph. Let's reach beyond direct recommendations to see how your recommendations are linked to others. We can guide globally, or scope our graph-based guidance to users similar to you.</p>
+    <div class="intro">
+      <p>We can do so much more with Elastic Graph. Let's reach beyond direct recommendations to see how your recommendations are linked to others. We can guide globally, or scope our graph-based guidance to users similar to you.</p>
 
 
         <h3>Scoped to:</h3>
@@ -146,9 +145,9 @@
           </label>
         </form>
 
-        <div class="graph-list">
-          <h3 style="display: inline">Considering?</h3>
-          <h3 style="display: inline; margin-left: 5em;">You might also like:</h3>
+      <div class="graph-list">
+        <h3 style="display: inline">Considering?</h3>
+        <h3 style="display: inline; margin-left: 5em;">You might also like:</h3>
         <ul>
             <li ng-repeat="movie in customRecs.recs.relatedMovies|limitTo:3">
               <div class="seed-movie">
@@ -160,10 +159,14 @@
             </li>
 
         </ul>
-        </div>
-
+      </div>
     </div>
-    
+  </div>
+
+  <div class="page-footer">
+    <div class="button toggle-about" ng-click="showFooter = !showFooter">
+      About / Contribute
+    </div>
   </div>
   
   
@@ -178,7 +181,18 @@
       <p><a href="http://opensourceconnections.com/services/relevancy">Learn more</a> about OpenSource Connections relevance services.</p>
     </div>
   </div>
+    <div class="footer-content text-muted" ng-show="showFooter">
+      <img src="http://opensourceconnections.com/images/logo/OSC-logomark-color.png" alt="OSC Logo" width="50" height="50">
+      <p>
+        Built by Doug Turnbull, with some polish from Daniel Beach.
+        <br>We are part of the <a href="http://opensourceconnections.com/">Opensource Connections</a> team.
+      </p>
 
+      <p>For more background view the original <a href="#">blog post</a>.</p>
 
-</body>
+      <p>Contribute on <a href="">Github</a></p>
+    </div>
+
+  </div>
+  </body>
 </html>
