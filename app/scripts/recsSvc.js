@@ -118,7 +118,8 @@ function recsSvc(esClient, $q, $http, graphUtils) {
 
     queryClause4 = {"more_like_this": {
                       "fields": ["liked_overview"],
-                      "like": overviewTexts
+                      "like": overviewTexts,
+                      "boost": 3.0
                    }};
 
     // some more features layered in
