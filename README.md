@@ -1,6 +1,6 @@
 # Elastic Graph Recommender
 
-![CircleCI](https://circleci.com/gh/o19s/elastic-graph-recommender.svg?style=svg)
+![CircleCI](https://circleci.com/gh/o19s/elastic-graph-recommender.svg)
 
 Building recommenders with Elastic Graph! This app makes movie recommendations using Elastic graph based on the Movielens data set. [Movielens](http://grouplens.org/datasets/movielens/) is a well known open data set with user movie ratings.
 
