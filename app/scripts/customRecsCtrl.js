@@ -32,8 +32,7 @@ angular.module('recsApp')
 
     customRecs.recs.setMode = function(mode) {
       if (mode === "relevance") {
-        customRecs.recs.config.useDate = true;
-        customRecs.recs.config.useGenre = true;
+        customRecs.recs.config.useOverviews = true;
       }
       customRecs.mode = mode;
       customRecs.recs.run();
