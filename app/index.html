@@ -20,9 +20,11 @@
 </head>
 <body ng-controller="CustomRecsCtrl as customRecs">
   <header>
-    <h1>Elastic Graph Recommender Sandbox</h1>
-    <p>Simple, real-time recommendations with Elasticsearch</p>
-    <br>
+    <h1>
+      Reccomendations with Elastic Graph</h1>
+    <div class="logomark">
+      <h2>by <a href="http://opensourceconnections.com"><img src="http://opensourceconnections.com/images/logo/OSC-logomark-color.png" alt="OSC Logo" width="50" height="50"><span>OpenSource Connections</span></h2></a></p>
+    </div>
   </header>
 
   <ul class="tabs">
@@ -38,7 +40,7 @@
     
     <div  ng-controller="LikedMovieSearchCtrl as movieSearch" ng-show="customRecs.mode == 'define'">
       <div class="intro">
-          <p>Welcome! In this demo, we're demonstrating the power of Elasticsearch's Graph plugin to build and tune recommendor systems.</p>
+        <p>Welcome! This demo by <a href="http://opensourceconnections.com">OpenSource Connections</a> demonstrates the power of Elasticsearch's <a href="https://www.elastic.co/products/graph">Graph plugin</a> to build and tune recommender systems.</p>
       </div>
         <h2>Start by adding a few movies that you like below:</h2>
 
@@ -183,12 +185,12 @@
     <div class="footer-content text-muted" ng-show="showFooter">
       <img src="http://opensourceconnections.com/images/logo/OSC-logomark-color.png" alt="OSC Logo" width="50" height="50">
       <p>
-        Built by the <a href="http://opensourceconnections.com/">Opensource Connections</a> team.
+      Built by the Elasticsearch experts at <a href="http://opensourceconnections.com/">Opensource Connections</a>
       </p>
 
       <p>For more background view the original <a href="#">blog post</a>.</p>
 
-      <p>Contribute on <a href="">Github</a></p>
+      <p>Check out the source code on <a href="https://github.com/o19s/elastic-graph-recommender">Github</a></p>
     </div>
   </div>
 

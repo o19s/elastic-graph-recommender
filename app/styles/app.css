@@ -230,3 +230,7 @@ input, submit, button {
     margin-right: 40px;
     display: inline;
 }
+
+.logomark img {
+    vertical-align: middle
+}
