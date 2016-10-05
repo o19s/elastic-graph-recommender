@@ -163,11 +163,6 @@
     </div>
   </div>
 
-  <div class="page-footer">
-    <div class="button toggle-about" ng-click="showFooter = !showFooter">
-      About / Contribute
-    </div>
-  </div>
   
   
   <div ng-show="customRecs.mode == 'what-else'">
@@ -181,17 +176,21 @@
       <p><a href="http://opensourceconnections.com/services/relevancy">Learn more</a> about OpenSource Connections relevance services.</p>
     </div>
   </div>
+  <div class="page-footer">
+    <div class="button toggle-about" ng-click="showFooter = !showFooter">
+      About / Contribute
+    </div>
     <div class="footer-content text-muted" ng-show="showFooter">
       <img src="http://opensourceconnections.com/images/logo/OSC-logomark-color.png" alt="OSC Logo" width="50" height="50">
       <p>
-        Built by Doug Turnbull, with some polish from Daniel Beach.
-        <br>We are part of the <a href="http://opensourceconnections.com/">Opensource Connections</a> team.
+        Built by the <a href="http://opensourceconnections.com/">Opensource Connections</a> team.
       </p>
 
       <p>For more background view the original <a href="#">blog post</a>.</p>
 
       <p>Contribute on <a href="">Github</a></p>
     </div>
+  </div>
 
   </div>
   </body>
