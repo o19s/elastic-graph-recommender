@@ -40,7 +40,7 @@ Start a dumb web server in the app/ dir,
 
 ```
 cd app/
-python -m SimpleHTTPServer
+./srv.sh
 ```
 
 ### Tests
