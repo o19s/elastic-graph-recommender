@@ -17,4 +17,4 @@ RUN bower --allow-root install -g
 EXPOSE 8000
 
 # Start python
-CMD srv.sh
+CMD /app/srv.sh

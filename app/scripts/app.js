@@ -4,7 +4,7 @@ angular.module('recsApp', ['elasticsearch']);
 // We expect a entry called elastic-graph-recommender that points to the
 // Elasticsearch server, typically in your /etc/hosts file.  This is to
 // be Docker friendly.
-var esBaseURL = 'http://ELASTICSEARCH_HOST';
+var esBaseURL = 'http://DYN_ELASTICSEARCH_HOST';
 angular.module('recsApp')
 .service('esClient', function (esFactory) {
   return esFactory({

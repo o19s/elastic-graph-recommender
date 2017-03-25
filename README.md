@@ -72,5 +72,7 @@ Run the docker image via:
 
 ```
 docker run -d -p 9200:9200 -p 9300:9300 o19s/elastic-graph-recommender
-docker run -d -p 8000:8000 --add-host -e ELASTICSEARCH_GRAPH_RECOMMENDER_URL=http://localhost:9200 o19s/elastic-graph-recommender-app
+docker run -d -p 8000:8000 -e ELASTICSEARCH_GRAPH_RECOMMENDER_URL=localhost:9200 o19s/elastic-graph-recommender-app
 ```
+
+Notice you pass in the url for your Elasticsearch server?
