@@ -110,7 +110,7 @@ def userBaskets(likeRating=4, dislikeRating=2, buildBasket=allFeatures):
     import json
     movieDict = json.loads(open('ml_tmdb.json').read())
     # Assumes sorted by user id
-    print "Buliding baskets"
+    print "Building baskets"
     lastUserId = -1
     moviesLiked = []
     moviesDisliked = []
