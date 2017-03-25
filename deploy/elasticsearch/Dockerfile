@@ -6,3 +6,8 @@ RUN echo "http.cors.enabled: true" >> /etc/elasticsearch/elasticsearch.yml
 
 RUN /usr/share/elasticsearch/bin/plugin install license
 RUN /usr/share/elasticsearch/bin/plugin install graph
+
+
+
+EXPOSE 9200
+EXPOSE 9300

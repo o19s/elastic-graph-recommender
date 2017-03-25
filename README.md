@@ -20,11 +20,11 @@ In the etl/ folder there are several Python scripts for importing movielens & TM
 
 ### Import TMDB movie details
 
-It's recommended you get ml_tmdb.json from someone. But you can recreate it with the scripts below
+It's recommended you get the prepared source data file `ml_tmdb.json` from someone. But you can recreate it with the scripts below
 
 - `tmdb.py` crawls the movielens TMDB movies into tmdb.json
 - `rehashTmdbToMl.py` creates ml_tmdb.json, which is tmdb.json with the movielens as the primary identifier
-- `indexMlTmdb.py` indexes ml_tmdb.json into Elasticsearch 
+- `indexMlTmdb.py` indexes ml_tmdb.json into Elasticsearch
 
 ## Angular App
 
@@ -36,7 +36,7 @@ See the `app/depends.sh` shell script for bootstrapping bower and npm dependenci
 
 ### Run the app
 
-Start a dumb web server in the app/ dir, 
+Start a dumb web server in the app/ dir,
 
 ```
 cd app/
@@ -51,8 +51,26 @@ Tests are run via Karma, you can run `app/test.sh` to run tests. When debugging,
 node_modules/karma/bin/karma start --no-single-run --log-level debug --auto-watch --browsers Chrome
 ```
 
-which runs Karma in Chrome, autowatching the source files. 
+which runs Karma in Chrome, autowatching the source files.
 
-# Deploying 
+# Deploying
+
+## By rubbing two sticks together to start a fire
 
 - However you like to deploy stuff, there's a script [bootstrap.sh](bootstrap.sh) that lists the steps taken to provision an Ubunutu box with Elastic Graph. NOTE this script is meant for development purposes, it does several non-secure things like opens up Elasticsearch to the world and with very liberal CORS permissions.  
+
+## By using a blow torch
+
+Build the docker images from scratch via:
+
+```
+docker build -t o19s/elastic-graph-recommender -f deploy/elasticsearch/Dockerfile .
+docker build -t o19s/elastic-graph-recommender-app -f deploy/app/Dockerfile .
+```
+
+Run the docker image via:
+
+```
+docker run -d -p 9200:9200 -p 9300:9300 o19s/elastic-graph-recommender
+docker run -d -p 8000:8000 --add-host -e ELASTICSEARCH_GRAPH_RECOMMENDER_URL=http://localhost:9200 o19s/elastic-graph-recommender-app
+```
