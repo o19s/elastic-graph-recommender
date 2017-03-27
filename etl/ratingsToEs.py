@@ -10,7 +10,9 @@ def esBaskets():
 
 
 def createMovielens(es):
-    es.indices.delete('movielens', ignore=['400', '404'])
+
+    es.indices.delete('movielens', ignore=[400, 404])
+
     settings = { #A
         "settings": {
             "number_of_shards": 1, #B
