@@ -61,18 +61,26 @@ which runs Karma in Chrome, autowatching the source files.
 
 ## By using a blow torch
 
+Start the docker images via:
+
+```
+docker run -d -p 9200:9200 -p 9300:9300 --name egr-elastic o19s/elastic-graph-recommender
+docker run -d -p 8000:8000 --name egr-app -e ELASTICSEARCH_GRAPH_RECOMMENDER_URL=localhost:9200 o19s/elastic-graph-recommender-app
+```
+
+Load the demo data via:
+
+```
+docker exec -it egr-elastic python /etl/indexMlTmdb.py http://localhost:9200 /etl/ml_tmdb.json
+docker exec -it egr-elastic python /etl/ratingsToEs.py http://localhost:9200 /etl/ml_tmdb.json /etl/ml-20m/ratings.csv
+
+```
+
+
+# Building Docker images
 Build the docker images from scratch via:
 
 ```
 docker build -t o19s/elastic-graph-recommender -f deploy/elasticsearch/Dockerfile .
 docker build -t o19s/elastic-graph-recommender-app -f deploy/app/Dockerfile .
 ```
-
-Run the docker image via:
-
-```
-docker run -d -p 9200:9200 -p 9300:9300 o19s/elastic-graph-recommender
-docker run -d -p 8000:8000 -e ELASTICSEARCH_GRAPH_RECOMMENDER_URL=localhost:9200 o19s/elastic-graph-recommender-app
-```
-
-Notice you pass in the url for your Elasticsearch server?

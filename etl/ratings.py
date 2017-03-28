@@ -1,4 +1,4 @@
-movieLensPath = 'ml-20m/ratings.csv'
+
 
 def mergeDicts(*dict_args):
     '''
@@ -13,7 +13,7 @@ def mergeDicts(*dict_args):
         result.update(dictionary)
     return result
 
-def movieLensRatings():
+def movieLensRatings(movieLensPath):
     import csv
     ml_ratings_f = open(movieLensPath)
     ml_reader = csv.reader(ml_ratings_f, delimiter=',')
@@ -105,10 +105,10 @@ def allFeatures(moviesUserLiked, moviesUserDisliked):
     return mergeDicts(likedDescriptors, dislikedDescriptors)
 
 
-def userBaskets(likeRating=4, dislikeRating=2, buildBasket=allFeatures):
+def userBaskets(mlTMDB='ml_tmdb.json',movieLensPath='ml-20m/ratings.csv', likeRating=4, dislikeRating=2, buildBasket=allFeatures):
     """ Movies a given user likes """
     import json
-    movieDict = json.loads(open('ml_tmdb.json').read())
+    movieDict = json.loads(open(mlTMDB).read())
     # Assumes sorted by user id
     print "Building baskets"
     lastUserId = -1
@@ -127,7 +127,7 @@ def userBaskets(likeRating=4, dislikeRating=2, buildBasket=allFeatures):
                 print "Skipped %s / %s " % (len(skipped), len(allmovies))
                 pass
 
-    for userId, mlensId, rating, timestamp in movieLensRatings():
+    for userId, mlensId, rating, timestamp in movieLensRatings(movieLensPath):
         if userId != lastUserId:
             lastUserId = userId
             if len(moviesLiked) > 0:

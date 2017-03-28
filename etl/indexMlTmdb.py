@@ -36,9 +36,11 @@ def reindex(es, analysisSettings={}, mappingSettings={}, movieDict={}, index='ml
 if __name__ == "__main__":
     from elasticsearch import Elasticsearch
     from sys import argv
-    esUrl="http://localhost:9200"
+    esUrl = "http://localhost:9200"
+    mlTMDB = "ml_tmdb.json"
     if len(argv) > 1:
         esUrl = argv[1]
+        mlTMDB = argv[2]
     es = Elasticsearch(esUrl, timeout=30)
-    movieDict = json.loads(open('ml_tmdb.json').read())
+    movieDict = json.loads(open(mlTMDB).read())
     reindex(es, movieDict=movieDict, esUrl=esUrl)
