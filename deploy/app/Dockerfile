@@ -1,6 +1,6 @@
 FROM worleydl/nginx-grunt:v1
 
-# Copy source to nginx host
+# Copy source to host
 COPY app /app
 WORKDIR /app
 
