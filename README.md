@@ -64,8 +64,10 @@ which runs Karma in Chrome, autowatching the source files.
 Start the docker images via:
 
 ```
-docker run -d -p 9200:9200 -p 9300:9300 --name egr-elastic o19s/elastic-graph-recommender
-docker run -d -p 8000:8000 --name egr-app -e ELASTICSEARCH_GRAPH_RECOMMENDER_URL=localhost:9200 o19s/elastic-graph-recommender-app
+docker login docker-registry.dev.o19s.com
+
+docker run -d -p 9200:9200 -p 9300:9300 --name egr-elastic docker-registry.dev.o19s.com/elastic-graph-recommender/elastic-graph-recommender:latest
+docker run -d -p 8000:8000 --name egr-app -e ELASTICSEARCH_GRAPH_RECOMMENDER_URL=localhost:9200 docker-registry.dev.o19s.com/elastic-graph-recommender/elastic-graph-recommender:latest
 ```
 
 Load the demo data via:
@@ -84,3 +86,14 @@ Build the docker images from scratch via:
 docker build -t o19s/elastic-graph-recommender -f deploy/elasticsearch/Dockerfile .
 docker build -t o19s/elastic-graph-recommender-app -f deploy/app/Dockerfile .
 ```
+
+Deploy to our private Docker registry http://docker-registry.dev.o19s.com:
+
+```
+docker login docker-registry.dev.o19s.com
+
+docker tag o19s/elastic-graph-recommender docker-registry.dev.o19s.com/elastic-graph-recommender/elastic-graph-recommender
+docker tag o19s/elastic-graph-recommender-app docker-registry.dev.o19s.com/elastic-graph-recommender/elastic-graph-recommender-app
+
+docker push docker-registry.dev.o19s.com/elastic-graph-recommender/elastic-graph-recommender
+docker push docker-registry.dev.o19s.com/elastic-graph-recommender/elastic-graph-recommender-app
