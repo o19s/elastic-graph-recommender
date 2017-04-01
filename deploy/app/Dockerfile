@@ -8,12 +8,6 @@ WORKDIR /app
 RUN npm install
 RUN bower --allow-root install -g
 
-# Build the app
-#RUN grunt build:dist
-
-#RUN rm -rf /usr/share/nginx/html/*
-#RUN cp -r dist/* /usr/share/nginx/html/.
-
 EXPOSE 8000
 
 # Start python
