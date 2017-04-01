@@ -66,25 +66,27 @@ Start the docker images via:
 ```
 docker login docker-registry.dev.o19s.com
 
-docker run -d -p 9200:9200 -p 9300:9300 --name egr-elastic docker-registry.dev.o19s.com/elastic-graph-recommender/elastic-graph-recommender:latest
-docker run -d -p 8000:8000 --name egr-app -e ELASTICSEARCH_GRAPH_RECOMMENDER_URL=localhost:9200 docker-registry.dev.o19s.com/elastic-graph-recommender/elastic-graph-recommender:latest
+docker run -d -p 9200:9200 -p 9300:9300 --name egr-elasticsearch docker-registry.dev.o19s.com/elastic-graph-recommender/egr-elasticsearch:latest
+docker run -d -p 8000:8000 --name egr-app -e ELASTICSEARCH_GRAPH_RECOMMENDER_URL=localhost:9200 docker-registry.dev.o19s.com/elastic-graph-recommender/egr-app:latest
 ```
 
 Load the demo data via:
 
 ```
-docker exec -it egr-elastic python /etl/indexMlTmdb.py http://localhost:9200 /etl/ml_tmdb.json
-docker exec -it egr-elastic python /etl/ratingsToEs.py http://localhost:9200 /etl/ml_tmdb.json /etl/ml-20m/ratings.csv
+docker exec -it egr-elasticsearch python /etl/indexMlTmdb.py http://localhost:9200 /etl/ml_tmdb.json
+docker exec -it egr-elasticsearch python /etl/ratingsToEs.py http://localhost:9200 /etl/ml_tmdb.json /etl/ml-20m/ratings.csv
 
 ```
+
+Browse to http://localhost:8000 to try it out!
 
 
 # Building Docker images
 Build the docker images from scratch via:
 
 ```
-docker build -t o19s/elastic-graph-recommender -f deploy/elasticsearch/Dockerfile .
-docker build -t o19s/elastic-graph-recommender-app -f deploy/app/Dockerfile .
+docker build -t elastic-graph-recommender/egr-elasticsearch -f deploy/elasticsearch/Dockerfile .
+docker build -t elastic-graph-recommender/egr-app -f deploy/app/Dockerfile .
 ```
 
 Deploy to our private Docker registry http://docker-registry.dev.o19s.com:
@@ -92,8 +94,8 @@ Deploy to our private Docker registry http://docker-registry.dev.o19s.com:
 ```
 docker login docker-registry.dev.o19s.com
 
-docker tag o19s/elastic-graph-recommender docker-registry.dev.o19s.com/elastic-graph-recommender/elastic-graph-recommender
-docker tag o19s/elastic-graph-recommender-app docker-registry.dev.o19s.com/elastic-graph-recommender/elastic-graph-recommender-app
+docker tag elastic-graph-recommender/egr-elasticsearch docker-registry.dev.o19s.com/elastic-graph-recommender/egr-elasticsearch
+docker tag elastic-graph-recommender/egr-app docker-registry.dev.o19s.com/elastic-graph-recommender/egr-app
 
-docker push docker-registry.dev.o19s.com/elastic-graph-recommender/elastic-graph-recommender
-docker push docker-registry.dev.o19s.com/elastic-graph-recommender/elastic-graph-recommender-app
+docker push docker-registry.dev.o19s.com/elastic-graph-recommender/egr-elasticsearch
+docker push docker-registry.dev.o19s.com/elastic-graph-recommender/egr-app
