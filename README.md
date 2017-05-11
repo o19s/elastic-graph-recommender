@@ -57,18 +57,21 @@ which runs Karma in Chrome, autowatching the source files.
 
 ## By rubbing two sticks together to start a fire
 
-- However you like to deploy stuff, there's a script [bootstrap.sh](bootstrap.sh) that lists the steps taken to provision an Ubunutu box with Elastic Graph. NOTE this script is meant for development purposes, it does several non-secure things like opens up Elasticsearch to the world and with very liberal CORS permissions.  
+- However you like to deploy stuff, there's a script [bootstrap.sh](bootstrap.sh) that lists the steps taken to provision an Ubuntu box with Elastic Graph. NOTE this script is meant for development purposes, it does several non-secure things like opens up Elasticsearch to the world and has very liberal CORS permissions.  
 
 ## By using a blow torch
 
 Start the docker images via:
 
 ```
-docker login docker-registry.dev.o19s.com
+docker login docker-registry.dev.o19s.com   # ask Eric for credentials
 
 docker run -d -p 9200:9200 -p 9300:9300 --name egr-elasticsearch docker-registry.dev.o19s.com/elastic-graph-recommender/egr-elasticsearch:latest
 docker run -d -p 8000:8000 --name egr-app -e ELASTICSEARCH_GRAPH_RECOMMENDER_URL=localhost:9200 docker-registry.dev.o19s.com/elastic-graph-recommender/egr-app:latest
 ```
+
+If you are deploying in the cloud, remember that the `ELASTICSEARCH_GRAPH_RECOMMENDER_URL` is pointing to the public URL for the Elasticsearch node, so update accordingly!
+
 
 Load the demo data via:
 
