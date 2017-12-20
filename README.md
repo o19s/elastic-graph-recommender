@@ -64,10 +64,10 @@ which runs Karma in Chrome, autowatching the source files.
 Start the docker images via:
 
 ```
-docker login docker-registry.dev.o19s.com   # ask Eric for credentials
+docker login harbor.dev.o19s.com   # ask Eric for credentials
 
-docker run -d -p 9200:9200 -p 9300:9300 --name egr-elasticsearch docker-registry.dev.o19s.com/elastic-graph-recommender/egr-elasticsearch:latest
-docker run -d -p 8000:8000 --name egr-app -e ELASTICSEARCH_GRAPH_RECOMMENDER_URL=localhost:9200 docker-registry.dev.o19s.com/elastic-graph-recommender/egr-app:latest
+docker run -d -p 9200:9200 -p 9300:9300 --name elasticsearch harbor.dev.o19s.com/elastic-graph-recommender/elasticsearch:latest
+docker run -d -p 8000:8000 --name app -e ELASTICSEARCH_GRAPH_RECOMMENDER_URL=localhost:9200 harbor.dev.o19s.com/elastic-graph-recommender/app:latest
 ```
 
 If you are deploying in the cloud, remember that the `ELASTICSEARCH_GRAPH_RECOMMENDER_URL` is pointing to the public URL for the Elasticsearch node, so update accordingly!
@@ -76,8 +76,8 @@ If you are deploying in the cloud, remember that the `ELASTICSEARCH_GRAPH_RECOMM
 Load the demo data via:
 
 ```
-docker exec -it egr-elasticsearch python /etl/indexMlTmdb.py http://localhost:9200 /etl/ml_tmdb.json
-docker exec -it egr-elasticsearch python /etl/ratingsToEs.py http://localhost:9200 /etl/ml_tmdb.json /etl/ml-20m/ratings.csv
+docker exec -it elasticsearch python /etl/indexMlTmdb.py http://localhost:9200 /etl/ml_tmdb.json
+docker exec -it elasticsearch python /etl/ratingsToEs.py http://localhost:9200 /etl/ml_tmdb.json /etl/ml-20m/ratings.csv
 
 ```
 
@@ -88,17 +88,17 @@ Browse to http://localhost:8000 to try it out!
 Build the docker images from scratch via:
 
 ```
-docker build -t elastic-graph-recommender/egr-elasticsearch -f deploy/elasticsearch/Dockerfile .
-docker build -t elastic-graph-recommender/egr-app -f deploy/app/Dockerfile .
+docker build -t elastic-graph-recommender/elasticsearch -f deploy/elasticsearch/Dockerfile .
+docker build -t elastic-graph-recommender/app -f deploy/app/Dockerfile .
 ```
 
-Deploy to our private Docker registry http://docker-registry.dev.o19s.com:
+Deploy to our private Docker registry http://harbor.dev.o19s.com:
 
 ```
-docker login docker-registry.dev.o19s.com
+docker login harbor.dev.o19s.com
 
-docker tag elastic-graph-recommender/egr-elasticsearch docker-registry.dev.o19s.com/elastic-graph-recommender/egr-elasticsearch
-docker tag elastic-graph-recommender/egr-app docker-registry.dev.o19s.com/elastic-graph-recommender/egr-app
+docker tag elastic-graph-recommender/elasticsearch harbor.dev.o19s.com/elastic-graph-recommender/elasticsearch
+docker tag elastic-graph-recommender/app harbor.dev.o19s.com/elastic-graph-recommender/app
 
-docker push docker-registry.dev.o19s.com/elastic-graph-recommender/egr-elasticsearch
-docker push docker-registry.dev.o19s.com/elastic-graph-recommender/egr-app
+docker push harbor.dev.o19s.com/elastic-graph-recommender/elasticsearch
+docker push harbor.dev.o19s.com/elastic-graph-recommender/app
