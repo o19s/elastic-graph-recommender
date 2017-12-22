@@ -3,6 +3,7 @@ import json
 import os
 import time
 from requests.exceptions import ConnectionError
+import urllib3
 
 # you'll need to have an API key for TMDB
 # to run these examples,
@@ -15,6 +16,8 @@ tmdb_api_key = os.environ["TMDB_API_KEY"]
 # then in shell do export TMDB_API_KEY=<Your Key>
 tmdb_api = requests.Session()
 tmdb_api.params={'api_key': tmdb_api_key}
+
+urllib3.disable_warnings()
 
 def movieList(linksFile='ml-20m/links.csv'):
     import csv
