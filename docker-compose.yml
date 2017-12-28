@@ -1,0 +1,29 @@
+# Docker compose file for the application.
+
+#version: '2'   # on CircleCI the version and services cause build to puke.
+#services:
+
+  app:
+    build: .
+    dockerfile: ./deploy/app/Dockerfile
+    ports:
+     - "5000:80"
+    environment:
+     - ELASTICSEARCH_URL=http://localhost:9200
+    links:
+     - elasticsearch
+    ports:
+     - "8000:8000"
+
+
+  elasticsearch:
+    build: .
+    dockerfile: ./deploy/elasticsearch/Dockerfile
+    ports:
+     - "9200:9200"
+     - "9300:9300"
+
+  init:
+    image: 'o19s/powerpoint_discovery_demo_init:latest'
+    links:
+      - elasticsearch
