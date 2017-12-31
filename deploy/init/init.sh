@@ -1,32 +1,31 @@
 #!/bin/bash
 
-# Wait until Solr is ready
-#until wait-for-it.sh solr:8983  ";" ; do
-#	echo "Waiting on MySQL init..."
+# Wait until Elasticsearch is ready
+#until wait-for-it.sh elasticsearch:9200  ";" ; do
+#	echo "Waiting on Elasticsearch init..."
 #	sleep 5
 #done
 sleep 15
 
-#echo "Uploading security.json to ZK"
-#/opt/solr/server/scripts/cloud-scripts/zkcli.sh -zkhost zookeeper:2181 -cmd putfile /security.json /code/security.json
-#sleep 5 #give ZK chance to sync with Solr first
+echo "Going to load data into Elasticsearch"
 
-#echo "Creating admin user"
-#curl --user solr:SolrRocks http://solr:8983/solr/admin/authentication -H 'Content-type:application/json' -d '{
-#  "set-user": {"admin" : "3YnRnaMk7sLbc","user" : "3YnRnaMk7sLbc"}
-#}'
+ls /etl
 
-#echo "Creating new roles"
-#curl --user solr:SolrRocks http://solr:8983/solr/admin/authorization -H 'Content-type:application/json' -d '{
-# "set-user-role": {"admin":["admin","dev"]},
-# "set-user-role": {"user":["admin","dev"]}
-#}'
+echo "Need to download ratings first.  Running prepareData.sh"
+cd /etl
+/etl/prepareData.sh
+cd /
 
-#echo "Deleting default Solr user"
-#curl --user admin:3YnRnaMk7sLbc http://solr:8983/solr/admin/authentication -H 'Content-type:application/json' -d  '{
-#                "delete-user": ["solr"]}'
+unset all_proxy # ignore stupid SOCKS proxy dependency warning
 
-#echo "Creating documents collection...."
-#curl --user admin:3YnRnaMk7sLbc "http://solr:8983/solr/admin/collections?action=CREATE&name=documents&collection.configName=configuration1&numShards=2&maxShardsPerNode=2" #place holder
+echo "Running rehashTmdbToMl.py"
+python /etl/rehashTmdbToMl.py /etl/tmdb.json /etl/ml_tmdb.json
 
-#echo "Done with setup"
+echo "Running indexMlTmdb.py"
+python /etl/indexMlTmdb.py http://elasticsearch:9200 /etl/ml_tmdb.json
+
+echo "Running ratingsToEs.py"
+python /etl/ratingsToEs.py http://elasticsearch:9200 /etl/ml_tmdb.json /etl/ml-20m/ratings.csv
+
+
+echo "Done with setup"

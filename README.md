@@ -76,6 +76,7 @@ If you are deploying in the cloud, remember that the `ELASTICSEARCH_GRAPH_RECOMM
 Load the demo data via:
 
 ```
+docker exec -it elasticsearch python /etl/rehashTmdbToMl.py
 docker exec -it elasticsearch python /etl/indexMlTmdb.py http://localhost:9200 /etl/ml_tmdb.json
 docker exec -it elasticsearch python /etl/ratingsToEs.py http://localhost:9200 /etl/ml_tmdb.json /etl/ml-20m/ratings.csv
 

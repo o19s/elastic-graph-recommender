@@ -24,6 +24,7 @@
      - "9300:9300"
 
   init:
-    image: 'o19s/powerpoint_discovery_demo_init:latest'
+    build: .
+    dockerfile: ./deploy/init/Dockerfile
     links:
       - elasticsearch

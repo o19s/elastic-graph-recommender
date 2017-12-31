@@ -6,10 +6,11 @@ RUN apt-get install python -y
 RUN apt-get install python-pip -y
 RUN pip install elasticsearch
 
-# Copy data prepped files to host
+# Copy files to container
 COPY etl /etl
+COPY deploy/init /code
 
-ADD . /code
+RUN chown -R elasticsearch:elasticsearch /code
+RUN chown -R elasticsearch:elasticsearch /etl
 
-#USER solr
 CMD /code/init.sh
