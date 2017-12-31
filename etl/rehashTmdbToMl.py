@@ -20,4 +20,10 @@ def rehashToMovielens(tmdbFile='tmdb.json', outFile='ml_tmdb.json'):
 
 
 if __name__ == "__main__":
-    rehashToMovielens()
+    from sys import argv
+    tmdbFile='tmdb.json'
+    outFile='ml_tmdb.json'
+    if len(argv) > 1:
+        tmdbFile = argv[1]
+        outFile = argv[2]
+    rehashToMovielens(tmdbFile=tmdbFile,outFile=outFile)
