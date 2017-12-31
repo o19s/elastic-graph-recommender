@@ -59,7 +59,7 @@ which runs Karma in Chrome, autowatching the source files.
 
 - However you like to deploy stuff, there's a script [bootstrap.sh](bootstrap.sh) that lists the steps taken to provision an Ubuntu box with Elastic Graph. NOTE this script is meant for development purposes, it does several non-secure things like opens up Elasticsearch to the world and has very liberal CORS permissions.  
 
-## By using a blow torch
+## By using Docker
 
 Start the docker images via:
 
@@ -67,10 +67,10 @@ Start the docker images via:
 docker login harbor.dev.o19s.com   # ask Eric for credentials
 
 docker run -d -p 9200:9200 -p 9300:9300 --name elasticsearch harbor.dev.o19s.com/elastic-graph-recommender/elasticsearch:latest
-docker run -d -p 8000:8000 --name app -e ELASTICSEARCH_GRAPH_RECOMMENDER_URL=localhost:9200 harbor.dev.o19s.com/elastic-graph-recommender/app:latest
+docker run -d -p 8000:8000 --name app -e ELASTICSEARCH_URL=http://localhost:9200 harbor.dev.o19s.com/elastic-graph-recommender/app:latest
 ```
 
-If you are deploying in the cloud, remember that the `ELASTICSEARCH_GRAPH_RECOMMENDER_URL` is pointing to the public URL for the Elasticsearch node, so update accordingly!
+If you are deploying in the cloud, remember that the `ELASTICSEARCH_URL` is pointing to the public URL for the Elasticsearch node, so update accordingly!
 
 
 Load the demo data via:
@@ -82,6 +82,14 @@ docker exec -it elasticsearch python /etl/ratingsToEs.py http://localhost:9200 /
 
 ```
 
+## By using a blow torch
+
+```
+docker login harbor.dev.o19s.com   # ask Eric for credentials
+docker-compose up
+```
+
+
 Browse to http://localhost:8000 to try it out!
 
 
@@ -91,6 +99,7 @@ Build the docker images from scratch via:
 ```
 docker build -t elastic-graph-recommender/elasticsearch -f deploy/elasticsearch/Dockerfile .
 docker build -t elastic-graph-recommender/app -f deploy/app/Dockerfile .
+docker build -t elastic-graph-recommender/init -f deploy/init/Dockerfile .
 ```
 
 Deploy to our private Docker registry http://harbor.dev.o19s.com:
@@ -100,6 +109,8 @@ docker login harbor.dev.o19s.com
 
 docker tag elastic-graph-recommender/elasticsearch harbor.dev.o19s.com/elastic-graph-recommender/elasticsearch
 docker tag elastic-graph-recommender/app harbor.dev.o19s.com/elastic-graph-recommender/app
+docker tag elastic-graph-recommender/init harbor.dev.o19s.com/elastic-graph-recommender/init
 
 docker push harbor.dev.o19s.com/elastic-graph-recommender/elasticsearch
 docker push harbor.dev.o19s.com/elastic-graph-recommender/app
+docker push harbor.dev.o19s.com/elastic-graph-recommender/init
