@@ -7,19 +7,19 @@
 #done
 sleep 15
 
-echo "Going to load data into Elasticsearch"
+#echo "Going to load data into Elasticsearch"
 
-ls /etl
+#ls /etl
 
-echo "Need to download ratings first.  Running prepareData.sh"
-cd /etl
-/etl/prepareData.sh
-cd /
+#echo "Need to download ratings first.  Running prepareData.sh"
+#cd /etl
+#/etl/prepareData.sh
+#cd /
 
-unset all_proxy # ignore stupid SOCKS proxy dependency warning
+#unset all_proxy # ignore stupid SOCKS proxy dependency warning
 
-echo "Running rehashTmdbToMl.py"
-python /etl/rehashTmdbToMl.py /etl/tmdb.json /etl/ml_tmdb.json
+#echo "Running rehashTmdbToMl.py"
+#python /etl/rehashTmdbToMl.py /etl/tmdb.json /etl/ml_tmdb.json
 
 echo "Running indexMlTmdb.py"
 python /etl/indexMlTmdb.py http://elasticsearch:9200 /etl/ml_tmdb.json

@@ -1,0 +1,27 @@
+# Docker compose file for the application on Digital Ocean.
+# run
+# sudo apt-get -y install python-pip
+# sudo pip install docker-compose
+
+#version: '2'   # on CircleCI the version and services cause build to puke.
+#services:
+
+  app:
+    image: harbor.dev.o19s.com/elastic-graph-recommender/app:latest
+    environment:
+     - ELASTICSEARCH_URL=http://elastic-graph-recommender.dev.o19s.com:9200
+    links:
+     - elasticsearch
+    ports:
+     - "8000:8000"
+
+  elasticsearch:
+    image: harbor.dev.o19s.com/elastic-graph-recommender/elasticsearch:latest
+    ports:
+     - "9200:9200"
+     - "9300:9300"
+
+  init:
+    image: harbor.dev.o19s.com/elastic-graph-recommender/init:latest
+    links:
+      - elasticsearch

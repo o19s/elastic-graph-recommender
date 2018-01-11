@@ -13,4 +13,11 @@ COPY deploy/init /code
 RUN chown -R elasticsearch:elasticsearch /code
 RUN chown -R elasticsearch:elasticsearch /etl
 
+RUN ls /etl
+WORKDIR /etl
+RUN ./prepareData.sh
+
+WORKDIR /
+RUN python /etl/rehashTmdbToMl.py /etl/tmdb.json /etl/ml_tmdb.json
+
 CMD /code/init.sh
