@@ -13,7 +13,7 @@
     links:
      - elasticsearch
     ports:
-     - "8000:8000"
+     - "80:8000"
 
   elasticsearch:
     image: harbor.dev.o19s.com/elastic-graph-recommender/elasticsearch:latest

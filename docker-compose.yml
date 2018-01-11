@@ -6,8 +6,6 @@
   app:
     build: .
     dockerfile: ./deploy/app/Dockerfile
-    ports:
-     - "5000:80"
     environment:
      - ELASTICSEARCH_URL=http://localhost:9200
     links:
