@@ -6,8 +6,9 @@ RUN apt-get install python -y
 RUN apt-get install python-pip -y
 RUN pip install elasticsearch
 
-# Copy data prepped files to host
-COPY etl /etl
+# Copy data prepped files to host.  Needed only if you don't have the init container
+# and want to load locally into Elasticsearch.
+# COPY etl /etl
 
 # Copy over CORS enabled configuration
 ADD ./deploy/elasticsearch/elasticsearch.yml /usr/share/elasticsearch/config/

@@ -7,6 +7,7 @@ RUN apt-get install python-pip -y
 RUN pip install elasticsearch
 
 # Copy files to container
+# If you get an error, there may be a huge /etl/ml-20m dir you need to delete first.
 COPY etl /etl
 COPY deploy/init /code
 
@@ -15,6 +16,7 @@ RUN chown -R elasticsearch:elasticsearch /etl
 
 RUN ls /etl
 WORKDIR /etl
+RUN rm -rf /etl/ml-20m
 RUN ./prepareData.sh
 
 WORKDIR /
