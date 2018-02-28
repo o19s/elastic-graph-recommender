@@ -1,3 +1,8 @@
+# Data Files
+etl/ml-20m.zip
+etl/ml-20m/
+etl/*.json
+
 #JS stuff
 .jshintrc
 bower_components/

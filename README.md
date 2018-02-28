@@ -20,11 +20,11 @@ In the etl/ folder there are several Python scripts for importing movielens & TM
 
 ### Import TMDB movie details
 
-It's recommended you get ml_tmdb.json from someone. But you can recreate it with the scripts below
+It's recommended you get the prepared source data file `ml_tmdb.json` from someone. But you can recreate it with the scripts below
 
 - `tmdb.py` crawls the movielens TMDB movies into tmdb.json
 - `rehashTmdbToMl.py` creates ml_tmdb.json, which is tmdb.json with the movielens as the primary identifier
-- `indexMlTmdb.py` indexes ml_tmdb.json into Elasticsearch 
+- `indexMlTmdb.py` indexes ml_tmdb.json into Elasticsearch
 
 ## Angular App
 
@@ -36,11 +36,11 @@ See the `app/depends.sh` shell script for bootstrapping bower and npm dependenci
 
 ### Run the app
 
-Start a dumb web server in the app/ dir, 
+Start a dumb web server in the app/ dir,
 
 ```
 cd app/
-python -m SimpleHTTPServer
+./srv.sh
 ```
 
 ### Tests
@@ -51,8 +51,66 @@ Tests are run via Karma, you can run `app/test.sh` to run tests. When debugging,
 node_modules/karma/bin/karma start --no-single-run --log-level debug --auto-watch --browsers Chrome
 ```
 
-which runs Karma in Chrome, autowatching the source files. 
+which runs Karma in Chrome, autowatching the source files.
 
-# Deploying 
+# Deploying
 
-- However you like to deploy stuff, there's a script [bootstrap.sh](bootstrap.sh) that lists the steps taken to provision an Ubunutu box with Elastic Graph. NOTE this script is meant for development purposes, it does several non-secure things like opens up Elasticsearch to the world and with very liberal CORS permissions.  
+## By rubbing two sticks together to start a fire
+
+- However you like to deploy stuff, there's a script [bootstrap.sh](bootstrap.sh) that lists the steps taken to provision an Ubuntu box with Elastic Graph. NOTE this script is meant for development purposes, it does several non-secure things like opens up Elasticsearch to the world and has very liberal CORS permissions.  
+
+## By using Docker
+
+Start the docker images via:
+
+```
+docker login harbor.dev.o19s.com   # ask Eric for credentials
+
+docker run -d -p 9200:9200 -p 9300:9300 --name elasticsearch harbor.dev.o19s.com/elastic-graph-recommender/elasticsearch:latest
+docker run -d -p 8000:8000 --name app -e ELASTICSEARCH_URL=http://localhost:9200 harbor.dev.o19s.com/elastic-graph-recommender/app:latest
+```
+
+If you are deploying in the cloud, remember that the `ELASTICSEARCH_URL` is pointing to the public URL for the Elasticsearch node, so update accordingly!
+
+
+Load the demo data via:
+
+```
+docker exec -it elasticsearch python /etl/rehashTmdbToMl.py
+docker exec -it elasticsearch python /etl/indexMlTmdb.py http://localhost:9200 /etl/ml_tmdb.json
+docker exec -it elasticsearch python /etl/ratingsToEs.py http://localhost:9200 /etl/ml_tmdb.json /etl/ml-20m/ratings.csv
+
+```
+
+## By using a blow torch
+
+```
+docker login harbor.dev.o19s.com   # ask Eric for credentials
+docker-compose up
+```
+
+
+Browse to http://localhost:8000 to try it out!
+
+
+# Building Docker images
+Build the docker images from scratch via:
+
+```
+docker build -t elastic-graph-recommender/elasticsearch -f deploy/elasticsearch/Dockerfile .
+docker build -t elastic-graph-recommender/app -f deploy/app/Dockerfile .
+docker build -t elastic-graph-recommender/init -f deploy/init/Dockerfile .
+```
+
+Deploy to our private Docker registry http://harbor.dev.o19s.com:
+
+```
+docker login harbor.dev.o19s.com
+
+docker tag elastic-graph-recommender/elasticsearch harbor.dev.o19s.com/elastic-graph-recommender/elasticsearch
+docker tag elastic-graph-recommender/app harbor.dev.o19s.com/elastic-graph-recommender/app
+docker tag elastic-graph-recommender/init harbor.dev.o19s.com/elastic-graph-recommender/init
+
+docker push harbor.dev.o19s.com/elastic-graph-recommender/elasticsearch
+docker push harbor.dev.o19s.com/elastic-graph-recommender/app
+docker push harbor.dev.o19s.com/elastic-graph-recommender/init
