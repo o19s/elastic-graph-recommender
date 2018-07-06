@@ -11,7 +11,7 @@ deployment:
   dev:
     branch: master
     commands:
-      - aws s3 sync app s3://recommendor.dev.o19s.com/ --delete
+      #- aws s3 sync app s3://recommendor.dev.o19s.com/ --delete
   prod:
     tag: /v[0-9]+(\.[0-9]+)*/
     commands:
