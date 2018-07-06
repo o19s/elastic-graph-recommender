@@ -1,14 +1,20 @@
-FROM worleydl/nginx-grunt:v1
+FROM nginx:alpine
+COPY app /usr/share/nginx/html
+COPY deploy/app/entrypoint.sh /usr/share/nginx/html/entrypoint.sh
+RUN chmod 755 /usr/share/nginx/html/entrypoint.sh
 
-# Copy source to host
-COPY app /app
-WORKDIR /app
+WORKDIR /usr/share/nginx/html
 
-# Get deps
+RUN apk add --update nodejs nodejs-npm
 RUN npm install
+
+RUN apk --no-cache add ca-certificates wget
+RUN wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://raw.githubusercontent.com/sgerrand/alpine-pkg-node-bower/master/sgerrand.rsa.pub
+RUN wget https://github.com/sgerrand/alpine-pkg-node-bower/releases/download/unreleased/node-bower-1.8.2-r0.apk
+RUN apk add --no-cache node-bower-1.8.2-r0.apk
+
 RUN bower --allow-root install -g
 
-EXPOSE 8000
+ENTRYPOINT ["/usr/share/nginx/html/entrypoint.sh"]
 
-# Start python
-CMD /app/srv.sh
+CMD ["nginx", "-g", "daemon off;"]
