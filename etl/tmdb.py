@@ -65,6 +65,8 @@ def extract(movieIds=[]):
             movieDict[tmdbId] = movie
         except ConnectionError as e:
             print e
+        except ValueError:
+            print('Bad JSON found.')
     return movieDict
 
 
