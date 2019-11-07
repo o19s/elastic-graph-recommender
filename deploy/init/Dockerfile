@@ -1,4 +1,4 @@
-FROM elasticsearch:2.4.4
+FROM elasticsearch:5.6.6
 
 # Need python to load sample data into Elasticsearch
 RUN apt-get update

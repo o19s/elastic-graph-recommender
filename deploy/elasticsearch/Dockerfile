@@ -1,4 +1,4 @@
-FROM elasticsearch:2.4.4
+FROM elasticsearch:5.6.6
 
 # Need python to load sample data into Elasticsearch
 RUN apt-get update
@@ -14,8 +14,8 @@ RUN pip install elasticsearch
 ADD ./deploy/elasticsearch/elasticsearch.yml /usr/share/elasticsearch/config/
 
 # Need some plugins!
-RUN /usr/share/elasticsearch/bin/plugin install license
-RUN /usr/share/elasticsearch/bin/plugin install graph
+#RUN /usr/share/elasticsearch/bin/elasticsearch-plugin install license
+RUN /usr/share/elasticsearch/bin/elasticsearch-plugin install x-pack
 
 EXPOSE 9200
 EXPOSE 9300
